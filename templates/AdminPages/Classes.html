@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Classes</title>
+
+</head>
+    <body>
+        {% block content %}
+            <div class="jumbotron text-center">
+                <h1 class="display-4">Dashboard</h1>
+            </div>
+            {% if message %}
+                    <div class = "form-control btn btn-outline-success btn-lg mb-3" disabled>
+                        {{ message }}
+                    </div>
+            {% endif %}
+            <div class="text-center mb-3">
+                <div class="container">
+                    <div class="row">
+                        <div class = "col">
+                            <a href="{%  url 'AdminMain' %}" class="form-control btn btn-primary">Back</a>
+                        </div>
+                        <div class="col">
+                            <a href="{%  url 'CreateCourse' %}" class="form-control btn btn-primary">Create New Course</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+ <!--div style="width: 55px;"></div--><!--Spacer-->
+            <!-- Example of class cards (can change)-->
+            <div class="container"style="padding: 5px;">
+            <div class ="row">
+            {% for course in course %}
+                    <div class="col-md-3 mb-3">
+                        <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
+                        <div class="card-header">Course code: {{ course.courseCode }}</div>
+                        <div class="card-body">
+                            <h5 class="card-title text-center">{{ course.courseName }}</h5>
+                            <form action="{%  url 'EditCourse' %}" method="post">
+                                    {%  csrf_token %}
+                                <a href="{%  url 'EditCourse'  course=course.courseName %}" class=" form-control btn btn-primary mb-2">Edit Class</a>
+                                <a href="{%  url 'ViewSections'  course=course.courseName %}" class="form-control btn btn-primary">View Sections</a>
+                            </form>
+                        </div>
+                    </div>
+                    </div>
+            {% endfor %}
+            </div>
+            </div>
+        {% endblock %}
+
+    </body>
+</html>

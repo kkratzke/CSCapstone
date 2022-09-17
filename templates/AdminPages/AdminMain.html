@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrator Page</title>
+</head>
+    <body>
+    {% block content %}
+        <div>
+            <div class = "jumbotron text-center">
+                <h1 class="display-4">Admin Page</h1>
+            </div>
+
+            <div class = "container">
+                <div class = "row">
+                    <div class="col-md-4 mb-5 text-center">
+                        <a href="{%  url 'Classes' %}" class="form-control btn btn-primary">See all Classes</a>
+                    </div>
+                    <div class="col-md-4 mb-5 text-center">
+                         <a href="{%  url 'CreateAccount' %}" class="form-control btn btn-primary">Create new account</a>
+                    </div>
+                    <div class="col-md-4 mb-5 text-center">
+                        <a href="{%  url 'AllUsers' %}" class="form-control btn btn-primary">All users</a>
+                    </div>
+                </div>
+                <div class = "row">
+                     <div class="col text-center">
+                        <a href="{% url 'home' %}" class = "btn btn-primary">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+
+    </body>
+</html>

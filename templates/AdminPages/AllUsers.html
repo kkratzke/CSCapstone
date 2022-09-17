@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+</head>
+    <body>
+        {% block content %}
+            <div>
+                <div class = "jumbotron text-center">
+                    <h1 class="display-4">All Users</h1>
+                </div>
+
+                <!-- Search bar-->
+                <form id ="form">
+                    {% csrf_token %}
+                        <input class="form-control" type="text" placeholder="Search All Users" aria-label="Search">
+                </form>
+
+                <!-- Example of how they would show up-->
+            </br>
+                    <table class="table mt-5 rounded">
+                        <thead class ="thead-dark">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col-md-4">Role</th>
+                                <th scope="col"> </th>
+                                <th scope="col">Options</th>
+                                <th scope="col"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for name in name %}
+                            <tr>
+                            <form action="{%  url 'AllUsers' %}" method="post">
+                                {% csrf_token %}
+                                {% if name.role != "Admin" %}
+                                <th scope="row">{{ name.user_last_name}} {{ name.user_first_name}}</th>
+                                <td>{{ name.role }}</td>
+
+                                    <td><a href="#" class="form-control btn btn-primary">Edit User information</a></td>
+                                    <td><a href="#" class="form-control btn btn-primary">View enrolled classes</a></td>
+                                    <td>
+                                        <a href="{% url 'AllUsers' username=name.email %}" class="form-control btn btn-danger">Delete User</a>
+                                    </td>
+                                {% endif %}
+                                </form>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            </br>
+
+
+                <div class="text-center">
+                    <a href="{%  url 'AdminMain' %}" class="btn btn-primary">Back</a>
+                </div>
+            </div>
+        {% endblock %}
+    </body>
+</html>

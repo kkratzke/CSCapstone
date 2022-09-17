@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Sections</title>
+</head>
+    <body>
+        {% block content %}
+            <div class = "jumbotron text-center">
+                <h1 class="display-4">Sections</h1>
+            </div>
+            <div class="container">
+                    <p class="alert alert-outline-secondary mb-2 text-center" style="font-size: 30px;">{{ course }}</p>
+                <div class="row">
+                <div style="width: 50px;"></div><!--Spacer-->
+                    {% for section in section_info %}
+                        <form action = "{%  url 'ViewSections' %}" method="post">
+                            {% csrf_token %}
+                    <div class="col-md-12 mb-3">
+                        <div class="card mb-2" style="background: grey;">
+                            <div class="card-header">
+                                <p class="text-center" style="color: white;">Section Number: {{ section.sectionNumber }}</p>
+                                <input type = "hidden" class="alert alert-outline-secondary mb-2 text-center" id = "sectionNumber" name="section_number" value="{{ section.sectionNumber }}" style="font-size: 30px;">
+                            </div>
+                            <div class="card-body">
+                                <p class="text-center" style="color: white;">Current TA: {{ section.user.user_first_name }} {{ section.user.user_last_name }}</p>
+                                <select from="role" class="btn btn-outline-light dropdown-toggle form-control mb-2" type="button" id="dropdownMenuButton" id="TA" name="TA">
+                                    <option value="Select TA"selected hidden>Select TA/blank = no change</option>
+                                {%  for TA in TA %}
+                                    <option value="{{ TA.user_first_name }} {{ TA.user_last_name }}">{{ TA.user_first_name }} {{ TA.user_last_name }}</option>
+                                {% endfor %}
+                                </select>
+                                <p style="color: white;">Meet time: {{ section.data }}</p>
+                                <p style="color: white;">Week: {{ section.week }}</p>
+                                <p style="color: white;">Room Number: {{ section.room }}</p>
+                                <input type = "hidden" class="alert alert-outline-secondary mb-2 text-center" id = "course" name="course2" value="{{ course }}" style="font-size: 30px;">
+                                <a href="{%  url 'DeleteSection' delete_section=section %}" class="btn btn-danger form-control mb-2">Delete Section</a>
+                                <button type="submit" class=" form-control btn btn-primary mb-2">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                        </form>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div class="text-center">
+                {% if user.role == "Admin" %}
+                    <a href="{%  url 'Classes' %}" class="btn btn-primary">Back to classes</a>
+                {% endif %}
+                {% if user.role == 'Instructor' %}
+                    <a href="{%  url 'UserClasses' %}" class="btn btn-primary">Back to classes</a>
+                {% endif %}
+                {% if user.role == 'TA' %}
+                    <a href="{%  url 'UserClasses' %}" class="btn btn-primary">Back to classes</a>
+                {% endif %}
+            </div>
+        {% endblock %}
+    </body>
+</html>

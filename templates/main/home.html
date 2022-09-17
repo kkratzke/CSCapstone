@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LoginPage</title>
+</head>
+    <body>
+        {% block content %}
+            <div class="jumbotron text-center">
+                 <h1 class="display-4">Syllabus Manager Application</h1>
+            </div>
+            {% if error %}
+                <div class="alert alert-warning" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+         <form action="{% url 'home' %}" method="post">
+                    {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" name="username" placeholder="Username" required>
+            </div>
+             <div class="form-group">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+            </div>
+             <div>
+                <button type="submit" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="First time user default password: 123456">LOGIN</button>
+             </div>
+        </form>
+        {% endblock  %}
+    </body>
+</html>

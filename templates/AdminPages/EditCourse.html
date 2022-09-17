@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Course</title>
+
+</head>
+    <body>
+
+    {% block content %}
+
+        <div class = "jumbotron text-center">
+            <h1 class="display-4">Edit Course</h1>
+        </div>
+        {% if message %}
+            <div class = "form-control btn btn-outline-success btn-lg mb-3" disabled>
+                {{ message }}
+            </div>
+        {% endif %}
+        <div class = "container">
+            <form action = "{%  url 'EditCourse' %}" method="post">
+                    {% csrf_token %}
+
+            <div class="row">
+                <div class ="col">
+                    <p class = "alert alert-outline-secondary" style="font-size: 20px;">Course Name: {{ course.0.courseName }}</p>
+                    <input type = "hidden" class="form-control btn btn-outline-secondary mb-2" id = "course" name="course1" value="{{ course.0.courseName }}">
+                </div>
+                <div class ="col">
+                    <p class ="alert alert-outline-secondary text-center" style="font-size: 20px;">Course Code: {{ course.0.courseCode }}</p>
+                    <input type = "hidden" class="form-control btn btn-outline-secondary mb-2" id = "course" name="course_code" value="{{ course.0.courseCode }}">
+                </div>
+                <div class ="col">
+                    <select from="Instructors" class="btn btn-outline-secondary form-control" type="button" id="dropdownMenuButton" id="Instructor" name="Instructor">
+                            <option value="{{ current_instructor }}"selected hidden>Current Instructor: {{ current_instructor }}</option>
+                        {%  for i in instructors %}
+                            <option value="{{ i.user_first_name }} {{ i.user_last_name }}">Instructors: {{ i.user_first_name }} {{ i.user_last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="card mb-2" style="background: grey; max-width: 18rem;">
+                        <div class="card-header">
+
+                            <p class="text-center" style="color: white;">All Sections</p>
+                        </div>
+                        <div class="card-body">
+                            {% for i in section_info %}
+                                <p style="color: white;">Section: {{ i.sectionNumber }}   TA: {{ i.user.user_first_name }} {{ i.user.user_last_name }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card mb-2" style="background: grey; max-width: 18rem;">
+                        <div class="card-header">
+                            <p class="text-center" style="color: white">Grading Scale</p>
+                        </div>
+                        <div class="card-body mb-2 rounded">
+                            <p>A(100-90)</p>
+                            <p>B(89-80)</p>
+                            <p>C(79-70)</p>
+                            <p>D(69-60)</p>
+                            <p>F(59-0)</p>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{%  url 'DeleteCourse' delete=course.0.courseName%}" class="btn btn-danger form-control mb-2">Delete Course</a>
+                    </div>
+                    <div>
+                        <!--a href="{%  url 'Classes' %}" class="btn btn-primary form-control mb-2">Save Changes</a-->
+                        <button type="submit" class=" form-control btn btn-primary mb-2">Save Changes</button>
+                    </div>
+                        <a href="{%  url 'Classes' %}" class="btn btn-primary form-control mb-2">Back to classes</a>
+                </div>
+                <div style="width: 20px">
+
+                </div>
+                <div>
+                    <div class="card mb-2" style="background: grey; width: 530%; height: 115%;">
+                        <div class="card-header">
+                            <p class="text-center" style="color: white">Current Syllabus</p>
+                        </div>
+                        <div class="card-body mb-2 rounded">
+                            <p class="text-center">Syllabus info</p>
+                        </div>
+                    </div>
+                    <div>
+                        <p style="height: 50px;"> </p>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+
+
+    {% endblock %}
+
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Course</title>
+
+</head>
+
+    <body>
+        {% block content %}
+
+            <div>
+                <div class = "jumbotron text-center">
+                    <h1 class="display-4">Course Creation</h1>
+                </div>
+                {% if message %}
+                    <div class = "form-control btn btn-outline-success btn-lg mb-3" disabled>
+                        {{ message }}
+                    </div>
+                    </br>
+                {% endif %}
+                 <form action = "{%  url 'CreateCourse' %}" method="post">
+                    {% csrf_token %}
+                    <div class = "container">
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" class="form-control btn btn-outline-secondary btn-lg" id="CourseName" name="course_name" placeholder="Course Name" required>
+                            </div>
+                            <div class="col mb-4">
+                                <input type="text" class="form-control btn btn-outline-secondary btn-lg" id="CourseSection" name="course_code" placeholder="Course Code" required>
+                            </div>
+                        </div>
+                        <div class ="row">
+                            <div class="col">
+                                <input type="text" class="form-control btn btn-outline-secondary btn-lg" id="CourseName" name="course_section1" placeholder="Course Section">
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control btn btn-outline-secondary btn-lg" id="CourseName" name="course_section2" placeholder="Course Section">
+                            </div>
+                            <div class="col mb-4">
+                                <input type="text" class="form-control btn btn-outline-secondary btn-lg" id="CourseName" name="course_section3" placeholder="Course Section">
+                            </div>
+                        </div>
+                        <div class = "row align-items-end">
+                            <div class="col-md text-center">
+                                <button type="submit" class=" form-control btn btn-primary">Create Course</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </br>
+                <div class="text-center">
+                    <a href="{%  url 'Classes' %}" class="btn btn-primary">Back</a>
+                </div>
+            </div>
+
+        {% endblock %}
+    </body>
+</html>

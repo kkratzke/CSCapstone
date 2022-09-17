@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Page</title>
+</head>
+    <body>
+    {% block content %}
+        <div>
+            <div class = "jumbotron text-center">
+                <h1 class="display-3">User Page</h1>
+                <p style="font-size: 20px;">Welcome {{user.user_first_name}} {{user.user_last_name}}</p>
+                <p style="font-size: 20px;">Current role: {{user.role}}</p>
+            </div>
+
+            <div class = "container">
+                <div class = "row">
+                    <div class="col mb-5 text-center">
+                         <a href="{%  url 'Edit' %}" class="form-control btn btn-primary">View/Edit Profile</a>
+                    </div>
+                    <div class="col mb-5 text-center">
+                        <a href="{%  url 'UserClasses' %}" class="form-control btn btn-primary">Class Dashboard</a>
+                    </div>
+                </div>
+                <div class = "row">
+                     <div class="col text-center">
+                        <a href="{% url 'home' %}" class = "btn btn-primary">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+
+    </body>
+</html>

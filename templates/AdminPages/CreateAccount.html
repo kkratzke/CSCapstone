@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Creation Page</title>
+</head>
+    <body>
+        {% block content %}
+         <div>
+            <div class = "jumbotron text-center">
+                <h1 class="display-4">Account Creation</h1>
+            </div>
+
+             {% if message %}
+                    <div class = "form-control btn btn-outline-success btn-lg mb-3" disabled>
+                        {{ message }}
+                    </div>
+                    </br>
+             {% endif %}
+            <div>
+                <form action = "{%  url 'CreateAccount' %}" method="post">
+                    {% csrf_token %}
+                    <div class = "container">
+                        <div class = "row">
+                            <div class="col-md-6 mb-5">
+                                <input type = "text" class="form-control btn btn-outline-secondary btn-lg" id = "first" name="user_first_name" placeholder="First Name" required>
+                            </div>
+                            <div class="col-md-6 mb-5">
+                                <input type = "text" class="form-control btn btn-outline-secondary btn-lg" id = "last" name="user_last_name" placeholder="Last Name" required>
+                            </div>
+                        </div>
+                        <div class = "row">
+                            <div class="col-md-6 mb-5">
+                                <input type = "email" class="form-control btn btn-outline-secondary btn-lg" id = "Email" name="email" placeholder="Email Address" required>
+                            </div>
+                            <div class="col-md-6 mb-5">
+                                <!--input type = "text" class="form-control btn btn-outline-secondary btn-lg" id = "password" name="password" placeholder="Default Password" required-->
+                                <select from="role" class="btn btn-outline-secondary dropdown-toggle btn-lg form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-labelledby="dropdownMenuLink" id="role" name="role">
+                                    <option value="Instructor">Instructor</option>
+                                    <option value="TA">TA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class = "row align-items-end">
+                            <div class="col-md text-center">
+                                <button type="submit" class=" form-control btn btn-primary">Create</button>
+                            </div>
+                        </div>
+                        </br>
+                    </div>
+                </form>
+            </div>
+
+                <div class="text-center">
+                    <a href="{%  url 'AdminMain' %}" class="btn btn-primary">Back</a>
+                </div>
+         </div>
+        {% endblock %}
+    </body>
+</html>
