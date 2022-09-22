@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/" method="post"> {% csrf_token %}
+                <div class="info">
+                    <table>
+                        <tr>
+                            <td>
+                                <input class="form-field" type="text" placeholder="Enter a username" name="uname" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="form-field" type="text" placeholder="Enter an email" name="email" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="form-field" type="text" placeholder="Enter first name" name="first_name" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="form-field" type="text" placeholder="Enter last name" name="last_name" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="form-field" type="text" placeholder="Enter password" name="password" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="form-field" type="text" placeholder="Confirm password" name="password2" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="submit" name="create_button">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+</body>
+</html>

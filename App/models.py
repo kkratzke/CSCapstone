@@ -3,9 +3,9 @@ from django.db import models
 # Create your models here.
 
 
-class User(models.Model):
-    username = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    first_name = models.CharField(max_length=20)
-    email = models.CharField(max_length=30)
-    password = models.CharField(max_length=15)
+class MyUser(models.Model):
+    username = models.CharField(max_length=20, default=None)
+    last_name = models.CharField(max_length=20, default=None)
+    first_name = models.CharField(max_length=20, default=None)
+    email = models.CharField(max_length=30, default=None)
+    password = models.CharField(max_length=64, default=None)
