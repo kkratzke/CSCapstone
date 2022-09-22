@@ -3,28 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
 <body>
-    <div class = container>
-        <div>
-            <h1>Log in</h1>
+    <h1>Log in</h1>
             <form action="/" method="post"> {% csrf_token %}
 
-                    <input placeholder="Enter username" name="uname" required>
+                    <input type='text' placeholder="Enter username" name="uname" required>
 
-                    <input placeholder="Enter password" name="psw" required>
+                    <input type='text' placeholder="Enter password" name="psw" required>
 
-                    <button type="submit">Log in</button>
+                    <button type="submit" name="newButton" value="Submit">Log in</button>
 
             </form>
             <div>
                 <p>{{ message }}</p>
             </div>
-        </div>
-
-        <!--<div class="forgot-pass">
-            <span class="psw"><a href="#">Forgot password?</a></span>
-        </div>-->
-    </div>
 </body>
 </html>
