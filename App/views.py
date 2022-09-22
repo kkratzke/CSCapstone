@@ -1,6 +1,4 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
 from django.views import View
 from App.models import *
 from .models import MyUser
@@ -14,43 +12,55 @@ class Homescreen(View):
         return render(request, "Homescreen.html", {})
 
     def post(self, request):
-        if request.method == 'POST' and 'login_button' in request.POST:
-            return redirect("/login", request)
+        if request.method == 'POST' and 'login_page' in request.POST:
+            return render(request, "Login.html")
 
-        if request.method == 'POST' and 'create_button' in request.POST:
-            return redirect("/createAccount", request)
+        if request.method == 'POST' and 'create_account_page' in request.POST:
+            return render(request, "CreateAccount.html")
 
-        # print("hello")
-class Login(View):
-    def get(self, request):
-        return render(request, "Login.html", {})
+        if request.method == 'POST' and "login_button" in request.POST:
+            uname = request.POST['uname']
+            password = request.POST['psw']
+            noSuchUser = False
+            badPass = False
+            try:
+                m = MyUser.objects.get(username__iexact=uname)
+                if m.password != hashlib.sha256(password.encode("utf-8")).hexdigest():
+                    badPass = True
+            except:
+                noSuchUser = True
 
-    def post(self, request):
-        print("hello")
-        uname = request.POST['uname']
-        password = request.POST['psw']
-        noSuchUser = False
-        badPass = False
-        try:
-            m = MyUser.objects.get(username__iexact=uname)
-            if m.password != password:
-                badPass = True
-        except:
-            noSuchUser = True
+            if (noSuchUser or badPass):
+                return render(request, "Login.html", {"message": "Incorrect Login credentials"})
+            else:
+                return redirect("/landing/", request)
 
-        if (noSuchUser or badPass):
-            return render(request, "Login.html", {"message": "Incorrect Login credentials"})
-        else:
-            return redirect("/landing", request)
+        if request.method == 'POST' and "create_account_button" in request.POST:
+            uname = request.POST['uname']
+            email = request.POST['email']
+            first = request.POST['first_name']
+            last = request.POST['last_name']
+            password = request.POST['password']
+            password2 = request.POST['password2']
+            message = ""
+            foundUser = True
+            try:
+                m = MyUser.objects.get(username__iexact=uname)
+            except:
+                foundUser = False
 
+            if foundUser:
+                message = "Username already taken"
 
-class CreateAccount(View):
-    def get(self, request):
-        return render(request, "CreateAccount.html", {})
+            if password != password2:
+                message = "Passwords do not match"
 
-    def post(self, request):
+            if message != "":
+                return render(request, "CreateAccount.html", {"message": message})
+            else:
+                # need to create and store new account
+                return redirect("/landing/", request)
 
-        return redirect("/landing/", request)
 
 class Landing(View):
     def get(self, request):

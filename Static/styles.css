@@ -1,0 +1,26 @@
+.container {
+    background-color: #FFFFFF;
+    border-radius: 3px;
+    padding: 25px 40px;
+    box-shadow: 0px 0px 0px 1px rgb(0 0 0 / 8%);
+    max-width: 400px;
+    margin: auto;
+    margin-top: 100px;
+    position: relative;
+}
+
+.user-pass {
+    margin: 0 0 1.2em;
+    word-wrap: break-word;
+}
+
+.error-message {
+    background: #EB5A46;
+    color: #FBEDEB;
+    font-size: 14px;
+    line-height: 1.333;
+    border-radius: 4px;
+    border: 1px solid #EB5A46;
+    display: inline-block;
+    padding: .5em 1em;
+}

@@ -4,20 +4,30 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+        {% load static %}
+
+        <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" media="screen">
+
 </head>
-<body>
-    <h1>Log in</h1>
+<div>
+    <div class = container>
+        <div/>
+            <h1>Log in</h1>
             <form action="/" method="post"> {% csrf_token %}
+                <div class="user-pass">
 
                     <input type='text' placeholder="Enter username" name="uname" required>
 
                     <input type='text' placeholder="Enter password" name="psw" required>
 
-                    <button type="submit" name="newButton" value="Submit">Log in</button>
+                    <button type="submit" name="login_button" value="Submit">Log in</button>
+                </div>
 
             </form>
             <div>
-                <p>{{ message }}</p>
+                <p class="error-message">{{ message }}</p>
             </div>
+        </div>
+    </div>
 </body>
 </html>
