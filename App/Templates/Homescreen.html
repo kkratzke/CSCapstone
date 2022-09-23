@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+            {% load static %}
+
+            <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" media="screen">
 </head>
 <body>
-    <form action="/" method="post"> {% csrf_token %}
+    <div class="container">
+        <h1>Welcome</h1>
+        <form action="/" method="post"> {% csrf_token %}
                     <button type="submit" name="login_page">Login</button>
-    </form>
-    <form action="/" method="post"> {% csrf_token %}
-                    <button type="submit" name="create_account_page">Create Account</button>
-    </form>
+        </form>
+        <br>
+        <form action="/" method="post"> {% csrf_token %}
+                        <button type="submit" name="create_account_page">Create Account</button>
+        </form>
+    </div>
 </body>
 </html>

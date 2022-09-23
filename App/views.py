@@ -58,7 +58,9 @@ class Homescreen(View):
             if message != "":
                 return render(request, "CreateAccount.html", {"message": message})
             else:
-                # need to create and store new account
+                x = MyUser(username=uname, password=hashlib.sha256(password.encode('utf-8')).hexdigest(),
+                           first_name=first, last_name=last, email=email)
+                x.save()
                 return redirect("/landing/", request)
 
 
