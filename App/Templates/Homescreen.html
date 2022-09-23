@@ -1,23 +1,60 @@
+{% load static %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/bootstrap.css' %}"
+    type="text/css"
+>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
-            {% load static %}
-
-            <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" media="screen">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome</h1>
-        <form action="/" method="post"> {% csrf_token %}
-                    <button type="submit" name="login_page">Login</button>
-        </form>
-        <br>
-        <form action="/" method="post"> {% csrf_token %}
-                        <button type="submit" name="create_account_page">Create Account</button>
-        </form>
-    </div>
+    <nav class="navbar navbar-expand-lg bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand text-white" href="#">Navbar</a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a class="nav-link active text-white" aria-current="page" href="#">
+                    Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">
+                    Explore
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">
+                  Popular
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white">
+                    Help
+                </a>
+              </li>
+            </ul>
+            <a class="nav-link" href="#">
+                <form action="/" method="post"> {% csrf_token %}
+                    <button type="button submit" class="btn btn-light pr-1" name="login_page">Login</button>
+                </form>
+            </a>
+            <a href="#" class="nav-link">
+                <form action="/" method="post"> {% csrf_token %}
+                    <button type="button submit" class="btn btn-light"name="create_account_page">Create Account</button>
+                </form>
+            </a>       
+          </div>
+        </div>
+    </nav>
+    <img src="./static/images/dashboard_img.png" alt="" class="img-fluid">
+    <h3>Get Started!</h3>
 </body>
 </html>
