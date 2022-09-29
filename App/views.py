@@ -26,11 +26,12 @@ class Homescreen(View):
                 return redirect("/landing/", request)
 
         if request.method == 'POST' and "create_account_button" in request.POST:
-            message = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
+            ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
                            request.POST['last_name'], request.POST['password'], request.POST['password2'])
-
+            message = ret[0]
+            reload_content = ret[1]
             if message != "":
-                return render(request, "CreateAccount.html", {"message": message})
+                return render(request, "CreateAccount.html", {"message": message, "reload_content": reload_content})
             else:
                 return redirect("/landing/", request)
 

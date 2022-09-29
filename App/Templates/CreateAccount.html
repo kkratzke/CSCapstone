@@ -15,17 +15,17 @@
             <form action="/" method="post"> {% csrf_token %}
                 <div class="user-pass">
 
-                    <input class="form-field" type="text" placeholder="Enter a username" name="uname" required>
+                    <input class="form-field" type="text" value= "{{ reload_content.0 }}" placeholder="Enter a username" name="uname" required>
 
-                    <input class="form-field" type="text" placeholder="Enter an email" name="email" required>
+                    <input class="form-field" type="text" value= "{{ reload_content.1 }}" placeholder="Enter an email" name="email" required>
 
-                    <input class="form-field" type="text" placeholder="Enter first name" name="first_name" required>
+                    <input class="form-field" type="text" value= "{{ reload_content.2 }}" placeholder="Enter first name" name="first_name" required>
 
-                    <input class="form-field" type="text" placeholder="Enter last name" name="last_name" required>
+                    <input class="form-field" type="text" value= "{{ reload_content.3 }}" placeholder="Enter last name" name="last_name" required>
 
-                    <input class="form-field" type="text" placeholder="Enter password" name="password" required>
+                    <input class="form-field" type="text" value= "{{ reload_content.4 }}" placeholder="Enter password" name="password" required>
 
-                    <input class="form-field" type="text" placeholder="Confirm password" name="password2" required>
+                    <input class="form-field" type="text" value= "{{ reload_content.5 }}" placeholder="Confirm password" name="password2" required>
 
                     <button type="submit" name="create_account_button">Submit</button>
 
