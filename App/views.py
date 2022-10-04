@@ -55,13 +55,14 @@ class Homescreen(View):
                 return render(request, "Homescreen.html")
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
-            return render(request, "Profile.html")
+            owner = MyUser.objects.get(username__iexact=request.session['login'])
+            reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
+            return render(request, "Profile.html", {"reload_content": reload_content})
 
         if request.method == 'POST' and "edit_profile_button" in request.POST:
             owner = MyUser.objects.get(username__iexact=request.session['login'])
-            ret = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'], request.POST['password'], request.POST['password2'], owner)
-            message = ret[0]
-            reload_content = ret[1]
+            message = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'], request.POST['password'], request.POST['password2'], request.session['login'])
+            reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:

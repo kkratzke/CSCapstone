@@ -59,43 +59,29 @@ def create_account(uname, email, first, last, pass1, pass2):
 
 
 def edit_profile(email, first, last, pass1, pass2, owner):
-    reload_content = [email, first, last, "", ""]
     message = ""
+    user = MyUser.objects.get(username__iexact=owner)
+    if valid_email_format(email) == "Valid":
+        emailIn = email
+    else:
+        message = valid_email_format(email)
 
-    try:
-        user = MyUser(owner)
-        message = user.username
-        if email == "":
-            emailIn = user.email
-        elif valid_email_format(email) == "Valid":
-            emailIn = email
-        else:
-            message = valid_email_format(email)
-            reload_content[0] = ''
+    firstIn = first
 
-        if first == "":
-            firstIn = user.first_name
-        else:
-            firstIn = first
+    lastIn = last
 
-        if last == "":
-            lastIn = user.last_name
-        else:
-            lastIn = last
+    if pass1 != pass2:
+        message = "Passwords do not match"
 
-        if pass1 == "" and pass2 == "":
-            pass2In = user.password
-        elif user.password != hashlib.sha256(pass1.encode("utf-8")).hexdigest():
-            message = "invalid password"
+    passIn = hashlib.sha256(pass1.encode("utf-8")).hexdigest()
 
-        if message == "":
-            user.email = emailIn
-            user.first_name = firstIn
-            user.last_name = lastIn
-            user.password = hashlib.sha256(pass2In.encode("utf-8")).hexdigest()
-            user.save()
-        else:
-            return message, reload_content
-    except:
-        return message, reload_content
+    if message == "":
+        user.email = emailIn
+        user.first_name = firstIn
+        user.last_name = lastIn
+        user.password = passIn
+        user.save()
+
+    return message
+
 
