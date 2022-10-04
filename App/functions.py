@@ -17,6 +17,7 @@ def login(uname, password):
     else:
         return True
 
+
 def valid_email_format(email):
     if "@" not in email:
         return "Email does not contain @."
@@ -24,6 +25,7 @@ def valid_email_format(email):
         return "Email should not contain a space."
     else:
         return "Valid"
+
 
 def create_account(uname, email, first, last, pass1, pass2):
     reload_content = [uname, email, first, last, pass1, pass2]
@@ -54,3 +56,46 @@ def create_account(uname, email, first, last, pass1, pass2):
         newUser.save()
 
     return (message, reload_content)
+
+
+def edit_profile(email, first, last, pass1, pass2, owner):
+    reload_content = [email, first, last, "", ""]
+    message = ""
+
+    try:
+        user = MyUser(owner)
+        message = user.username
+        if email == "":
+            emailIn = user.email
+        elif valid_email_format(email) == "Valid":
+            emailIn = email
+        else:
+            message = valid_email_format(email)
+            reload_content[0] = ''
+
+        if first == "":
+            firstIn = user.first_name
+        else:
+            firstIn = first
+
+        if last == "":
+            lastIn = user.last_name
+        else:
+            lastIn = last
+
+        if pass1 == "" and pass2 == "":
+            pass2In = m.password
+        elif user.password != hashlib.sha256(password.encode("utf-8")).hexdigest():
+            message = "invalid password"
+
+        if message == "":
+            user.email = emailIn
+            user.first_name = firstIn
+            user.last_name = lastIn
+            user.password = hashlib.sha256(pass2In.encode("utf-8")).hexdigest()
+            user.save()
+        else:
+            return message, reload_content
+    except:
+        return message, reload_content
+
