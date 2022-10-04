@@ -4,7 +4,7 @@ from App.models import *
 from .models import MyUser
 import datetime
 import hashlib
-from .functions import create_account, login
+from .functions import create_account, login, edit_profile
 
 
 class Homescreen(View):
@@ -53,6 +53,19 @@ class Homescreen(View):
                 newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=campaignCode, owner=owner)
                 newCampaign.save()
                 return render(request, "Homescreen.html")
+
+        if request.method == 'POST' and 'edit_profile_page' in request.POST:
+            return render(request, "Profile.html")
+
+        if request.method == 'POST' and "edit_profile_button" in request.POST:
+            owner = MyUser.objects.get(username__iexact=request.session['login'])
+            ret = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'], request.POST['password'], request.POST['password2'], owner)
+            message = ret[0]
+            reload_content = ret[1]
+            if message != "":
+                return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
+            else:
+                return redirect("/landing/", request)
 
 
 class Landing(View):
