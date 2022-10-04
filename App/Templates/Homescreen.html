@@ -6,49 +6,50 @@
     type="text/css"
 >
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
     <title>Dashboard</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-primary">
+    <nav class="navbar navbar-expand-lg rounded shadow mt-2">
         <div class="container-fluid">
-          <a class="navbar-brand text-white" href="#">Navbar</a>
+          <a class="navbar-brand" href="#">Navbar</a>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto">
               <li class="nav-item">
-                <a class="nav-link active text-white" aria-current="page" href="#">
+                <a class="nav-link active" aria-current="page" href="#">
                     Home
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="#">
+                <a class="nav-link" href="#">
                     Explore
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white" href="#">
+                <a class="nav-link" href="#">
                   Popular
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white">
+                <a class="nav-link">
                     Help
                 </a>
               </li>
             </ul>
             <a class="nav-link" href="#">
                 <form action="/" method="post"> {% csrf_token %}
-                    <button type="button submit" class="btn btn-light pr-1" name="login_page">Login</button>
-                </form>
-            </a>
-            <a href="#" class="nav-link">
-                <form action="/" method="post"> {% csrf_token %}
-                    <button type="button submit" class="btn btn-light"name="create_account_page">Create Account</button>
+                  <div class="pt-2">
+                    <button type="button submit" class="btn primary-btn pr-1" name="login_page">Login</button>
+                  </div>
                 </form>
             </a>
             <a href="#" class="nav-link">
@@ -65,7 +66,89 @@
         </div>
 
     </nav>
-    <img src="./static/images/dashboard_img.png" alt="" class="img-fluid">
-    <h3>Get Started!</h3>
+    <div class="row mt-1 ml-1">
+      <div class="col-7">
+        <img src="./static/images/dashboard-img-1.png" alt="" class="img homepage-img">
+      </div>
+      <div class="col-5">
+        <h2>Get Started!</h2>
+      </div>
+    </div>
+    <div class="row mt-1 ml-1">
+      <div class="col-5">
+        <h1>Get Started!</h1>
+      </div>
+      <div class="col-7">
+        <img src="./static/images/dashboard-img-2.png" alt="" class="img homepage-img">
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="row"><h1>Popular Posts</h1></div>
+      <div class="row">
+        <div class="col-4">
+          <div class="card-fluid">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card-fluid">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card-fluid">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>
+<style>
+  .navbar{
+    width: 75%;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #FFFFFF;
+  }
+  .nav-link{
+    color: #302B27;
+  }
+  .mt-0 {
+  margin-top: 0 !important;
+}
+
+.mt-1 {
+  margin-top: 80px !important;
+}
+.ml-1 {
+  margin-left: 40px;
+}
+.homepage-img {
+  width: 100%;
+}
+.primary-btn {
+  background-color: #FFB400;
+}
+.primary-btn:hover {
+  background-color: #302B27;
+  color: #FFFFFF;
+}
+h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 300;
+}
+
+</style>
