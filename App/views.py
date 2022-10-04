@@ -75,3 +75,12 @@ class Landing(View):
 
     def post(selfself, request):
         return redirect("/", request)
+class LogIn(View):
+    def get(self, request):
+        return render(request, "Login.html", {})
+    def post(self, request):
+        if request.method == 'POST' and 'create_account_page' in request.POST:
+            return redirect("/createaccount/")
+class CreateAccount(View):
+    def get(self, request):
+        return render(request, "CreateAccount.html")
