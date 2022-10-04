@@ -50,7 +50,7 @@ class Homescreen(View):
                 type = request.POST['type']
                 campaignCode = request.POST['campaign_code']
                 owner = MyUser.objects.get(username__iexact=request.session['login'])
-                newCampaign = Campaign(campaignName=campaignName, type= type, campaignCode= campaignCode, owner= owner)
+                newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=campaignCode, owner=owner)
                 newCampaign.save()
                 return render(request, "Homescreen.html")
 
