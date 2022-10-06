@@ -17,6 +17,7 @@ def login(uname, password):
     else:
         return True
 
+
 def valid_email_format(email):
     if "@" not in email:
         return "Email does not contain @."
@@ -24,6 +25,7 @@ def valid_email_format(email):
         return "Email should not contain a space."
     else:
         return "Valid"
+
 
 def create_account(uname, email, first, last, pass1, pass2):
     reload_content = [uname, email, first, last, pass1, pass2]
@@ -54,3 +56,32 @@ def create_account(uname, email, first, last, pass1, pass2):
         newUser.save()
 
     return (message, reload_content)
+
+
+def edit_profile(email, first, last, pass1, pass2, owner):
+    message = ""
+    user = MyUser.objects.get(username__iexact=owner)
+    if valid_email_format(email) == "Valid":
+        emailIn = email
+    else:
+        message = valid_email_format(email)
+
+    firstIn = first
+
+    lastIn = last
+
+    if pass1 != pass2:
+        message = "Passwords do not match"
+
+    passIn = hashlib.sha256(pass1.encode("utf-8")).hexdigest()
+
+    if message == "":
+        user.email = emailIn
+        user.first_name = firstIn
+        user.last_name = lastIn
+        user.password = passIn
+        user.save()
+
+    return message
+
+

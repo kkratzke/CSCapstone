@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+        {% load static %}
+
+        <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" media="screen">
+</head>
+<body>
+    <div class = container>
+        <div>
+            <h1>Create Campaign</h1>
+            <form action="/" method="post"> {% csrf_token %}
+                <div class="user-pass">
+
+                    <input class="form-field" type="text" placeholder="Campaign Name" name="campaign_name" required>
+
+                    <select name="type">
+                        <option value="Medical">Medical</option>
+                        <option value="Memorial">Memorial</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Education">Education</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    <input class="form-field" type="text" placeholder="Campaign Code" name="campaign_code" required>
+
+                    <button type="submit" name="create_campaign">Submit</button>
+
+                </div>
+            </form>
+            <div>
+                <p class="error-message">{{ message }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
