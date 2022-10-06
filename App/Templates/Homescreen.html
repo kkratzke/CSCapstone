@@ -52,6 +52,11 @@
                   </div>
                 </form>
             </a>
+              <a href="#" class="nav-link">
+                <form action="/" method="post"> {% csrf_token %}
+                    <button type="button submit" class="btn btn-light"name="create_account_page">Create Account</button>
+                </form>
+            </a>
             <a href="#" class="nav-link">
                 <form action="/" method="post"> {% csrf_token %}
                     <button type="button submit" class="btn btn-light"name="create_campaign_page">Create Campaign</button>

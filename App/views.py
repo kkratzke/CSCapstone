@@ -29,13 +29,13 @@ class Homescreen(View):
 
         if request.method == 'POST' and "create_account_button" in request.POST:
             ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
-                           request.POST['last_name'], request.POST['password'], request.POST['password2'])
+                                 request.POST['last_name'], request.POST['password'], request.POST['password2'])
             message = ret[0]
             reload_content = ret[1]
             if message != "":
                 return render(request, "CreateAccount.html", {"message": message, "reload_content": reload_content})
             else:
-                return redirect("/landing/", request)
+                return redirect("/pagejump/", request)
 
         if request.method == 'POST' and 'create_campaign_page' in request.POST:
             return render(request, "CreateCampaign.html")
@@ -55,13 +55,19 @@ class Homescreen(View):
                 return render(request, "Homescreen.html")
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
-            owner = MyUser.objects.get(username__iexact=request.session['login'])
-            reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
-            return render(request, "Profile.html", {"reload_content": reload_content})
+            logged_in = request.session['login']
+            if logged_in is None:
+                # need to deny access to edit account
+                return render(request, "Profile.html", {"message": "Must be logged in to edit profile"})
+            else:
+                owner = MyUser.objects.get(username__iexact=request.session['login'])
+                reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
+                return render(request, "Profile.html", {"reload_content": reload_content})
 
         if request.method == 'POST' and "edit_profile_button" in request.POST:
             owner = MyUser.objects.get(username__iexact=request.session['login'])
-            message = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'], request.POST['password'], request.POST['password2'], request.session['login'])
+            message = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'],
+                                   request.POST['password'], request.POST['password2'], request.session['login'])
             reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
@@ -72,6 +78,14 @@ class Homescreen(View):
 class Landing(View):
     def get(self, request):
         return render(request, "Landing.html", {})
+
+    def post(selfself, request):
+        return redirect("/", request)
+
+
+class PageJump(View):
+    def get(self, request):
+        return render(request, "PageJump.html", {})
 
     def post(selfself, request):
         return redirect("/", request)
