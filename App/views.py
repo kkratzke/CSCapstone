@@ -25,7 +25,7 @@ class Homescreen(View):
                 return render(request, "Login.html", {"message": "Incorrect Login credentials"})
             else:
                 request.session['login'] = request.POST['uname']
-                return render(request, "Homescreen.html", {})
+                return render(request, "Landing.html", {})
 
         if request.method == 'POST' and "create_account_button" in request.POST:
             ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],

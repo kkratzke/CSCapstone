@@ -23,37 +23,44 @@
                     </div>
                     <hr>
                     <h3 class="mt-2">Let's Get Started!</h3>
-                    <div class="form-group">
-                        <label for="uname">Username</label>
-                        <input class="form-control" type="text" value="{{ reload_content.0 }}" placeholder="Enter a username" name="uname" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input class="form-control" type="email" value="{{ reload_content.1 }}" placeholder="Enter an email" name="email" required>
-                    </div>
-                    <div class="row">
-                        <div class="col">
+                    <div class="user-pass">
+                        <form action="/" method="post">{% csrf_token %}
                             <div class="form-group">
-                                <label for="first_name">First Name</label>
-                                <input class="form-control" type="text" value="{{ reload_content.2 }}" placeholder="Enter first name" name="first_name" required>
+                                <label for="uname">Username</label>
+                                <input class="form-control" type="text" value="{{ reload_content.0 }}" placeholder="Enter a username" name="uname" required>
                             </div>
-                        </div>
-                        <div class="col">
                             <div class="form-group">
-                                <label for="last_name">Last Name</label>
-                                <input class="form-control" type="text" value="{{ reload_content.3 }}" placeholder="Enter last name" name="last_name" required>
+                                <label for="email">Email</label>
+                                <input class="form-control" type="email" value="{{ reload_content.1 }}" placeholder="Enter an email" name="email" required>
                             </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="first_name">First Name</label>
+                                        <input class="form-control" type="text" value="{{ reload_content.2 }}" placeholder="Enter first name" name="first_name" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="last_name">Last Name</label>
+                                        <input class="form-control" type="text" value="{{ reload_content.3 }}" placeholder="Enter last name" name="last_name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input class="form-control" type="text" value="{{ reload_content.4 }}" placeholder="Enter password" name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password2">Password</label>
+                                <input class="form-control" type="text" value="{{ reload_content.5 }}" placeholder="Confirm password" name="password2" required>
+                            </div>
+                            <button type="submit" name="create_account_button" class="btn btn-primary my-3">Submit</button>
+                        </form>
+                        <div>
+                            <p class="error-message">{{ message }}</p>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input class="form-control" type="text" value="{{ reload_content.4 }}" placeholder="Enter password" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password2">Password</label>
-                        <input class="form-control" type="text" value="{{ reload_content.5 }}" placeholder="Confirm password" name="password2" required>
-                    </div>
-                    <button type="submit" name="create_account_button" class="btn btn-primary my-3">Submit</button>
                 </div>
             </div>
         </div>

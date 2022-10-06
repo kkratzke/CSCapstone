@@ -13,23 +13,26 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-3">
-                <form class="form-container">
+                <form action="/" method="post" class="form-container">{% csrf_token %}
                     <h3>Welcome Back!</h3>
                     <hr>
                     <div class="form-group">
                         <label for="usernameInput">Username</label>
-                        <input type="text" class="form-control" id="usernameInput" aria-describedby="username" placeholder="Enter username...">
+                        <input type="text" name="uname" class="form-control" id="usernameInput" aria-describedby="username" placeholder="Enter username...">
                     </div>
                     <div class="form-group">
                         <label for="passwordInput">Password</label>
-                        <input type="password" class="form-control" id="passwordInput" aria-describedby="password" placeholder="Enter password...">
+                        <input type="password" name="psw" class="form-control" id="passwordInput" aria-describedby="password" placeholder="Enter password...">
                     </div>
-                    <button class="btn btn-primary btn-block mt-3">Log In</button>
+                    <button class="btn btn-primary btn-block mt-3" name="login_button">Log In</button>
                     <div class="row mt-3">
                         <p class="mb-0">Don't have an account?</p>
                         <a href="{% url 'create_account_page' %}" class="mt-0">Create an Account</a>
                     </div>
                 </form>
+                <div>
+                    <p class="error-message">{{message}}</p>
+                </div>
             </div>
         </div>
     </div>
