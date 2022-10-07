@@ -72,7 +72,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return redirect("/landing/", request)
+                return render(request, "Homescreen.html")
 
 
 class Landing(View):
@@ -81,6 +81,15 @@ class Landing(View):
 
     def post(selfself, request):
         return redirect("/", request)
+class LogIn(View):
+    def get(self, request):
+        return render(request, "Login.html", {})
+    def post(self, request):
+        if request.method == 'POST' and 'create_account_page' in request.POST:
+            return redirect("/createaccount/")
+class CreateAccount(View):
+    def get(self, request):
+        return render(request, "CreateAccount.html")
 
 
 class PageJump(View):
