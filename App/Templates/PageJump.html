@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>You just created your account successfully! jump to homepage in <span id="sp">5</span> s</h1>
+<script>
+ onload=function () {
+ setInterval(go,1000)
+ };
+ var x=4;
+ function go() {
+
+ if (x>=0){
+  document.getElementById("sp").innerText=x;
+ }else {
+  location.href="/", rel="external nofollow", rel="external nofollow" ;
+ }
+ x--;
+ }
+</script>
+</body>
+</html>

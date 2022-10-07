@@ -19,8 +19,10 @@ from App.views import Homescreen, Landing, LogIn, CreateAccount
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', Homescreen.as_view(), name='Homescreen'),
     path('landing/', Landing.as_view(), name='Landing'),
     path('', Homescreen.as_view(), name='Homescreen'),
     path('login/', LogIn.as_view(), name='LogIn'),
-    path('createaccount/', CreateAccount.as_view(), name="create_account_page")
+    path('createaccount/', CreateAccount.as_view(), name="create_account_page"),
+    path('pagejump/', PageJump.as_view(), name='PageJump'),
 ]
