@@ -17,6 +17,9 @@ class Homescreen(View):
         if request.method == 'POST' and 'login_page' in request.POST:
             return render(request, "Login.html")
 
+        if request.method == 'POST' and 'logout' in request.POST:
+            return redirect('/', request)
+
         if request.method == 'POST' and 'create_account_page' in request.POST:
             return render(request, "CreateAccount.html")
 
