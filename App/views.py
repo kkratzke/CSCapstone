@@ -66,7 +66,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return redirect("/", request)
+                return render(request, "Homescreen.html")
 
 
 class Landing(View):
