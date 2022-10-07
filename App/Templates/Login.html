@@ -1,33 +1,58 @@
+{% load static %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/bootstrap.css' %}"
+    type="text/css"
+>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-
-        {% load static %}
-
-        <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" media="screen">
-
+    <title>Log In</title>
 </head>
 <body>
-    <div class = container>
-        <div>
-            <h1 style="text-align: center">Log in</h1>
-            <form action="/" method="post"> {% csrf_token %}
-                <div class="user-pass">
-
-                    <input type='text' placeholder="Enter username" name="uname" required>
-
-                    <input type='text' placeholder="Enter password" name="psw" required>
-
-                    <button type="submit" name="login_button" value="Submit">Log in</button>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3">
+                <form action="/" method="post" class="form-container">{% csrf_token %}
+                    <h3>Welcome Back!</h3>
+                    <hr>
+                    <div class="form-group">
+                        <label for="usernameInput">Username</label>
+                        <input type="text" name="uname" class="form-control" id="usernameInput" aria-describedby="username" placeholder="Enter username...">
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordInput">Password</label>
+                        <input type="password" name="psw" class="form-control" id="passwordInput" aria-describedby="password" placeholder="Enter password...">
+                    </div>
+                    <button class="btn btn-primary btn-block mt-3" name="login_button">Log In</button>
+                    <div class="row mt-3">
+                        <p class="mb-0">Don't have an account?</p>
+                        <a href="{% url 'create_account_page' %}" class="mt-0">Create an Account</a>
+                    </div>
+                </form>
+                <div>
+                    <p class="error-message">{{message}}</p>
                 </div>
-
-            </form>
-            <div>
-                <p class="error-message">{{ message }}</p>
             </div>
         </div>
     </div>
 </body>
 </html>
+<style>
+body{
+    background-color: #FFB400;
+}
+.btn-primary{
+    background-color: #FFB400;
+    color: black;
+    width: 100%;
+}
+.form-container{
+    position: absolute;
+    top: 25%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 40px 0px;
+}
+</style>
