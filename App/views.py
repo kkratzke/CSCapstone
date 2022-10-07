@@ -25,7 +25,7 @@ class Homescreen(View):
                 return render(request, "Login.html", {"message": "Incorrect Login credentials"})
             else:
                 request.session['login'] = request.POST['uname']
-                return render(request, "Homescreen.html", {})
+                return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "create_account_button" in request.POST:
             ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
@@ -52,7 +52,7 @@ class Homescreen(View):
                 owner = MyUser.objects.get(username__iexact=request.session['login'])
                 newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=campaignCode, owner=owner)
                 newCampaign.save()
-                return render(request, "Homescreen.html")
+                return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
@@ -72,7 +72,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return render(request, "Homescreen.html")
+                return render(request, "Homescreen.html", {"login": request.session['login']})
 
 
 class Landing(View):
