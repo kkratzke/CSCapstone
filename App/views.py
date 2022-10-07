@@ -25,7 +25,7 @@ class Homescreen(View):
                 return render(request, "Login.html", {"message": "Incorrect Login credentials"})
             else:
                 request.session['login'] = request.POST['uname']
-                return render(request, "Landing.html", {})
+                return render(request, "Homescreen.html", {})
 
         if request.method == 'POST' and "create_account_button" in request.POST:
             ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
@@ -35,7 +35,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "CreateAccount.html", {"message": message, "reload_content": reload_content})
             else:
-                return redirect("/landing/", request)
+                return redirect("/", request)
 
         if request.method == 'POST' and 'create_campaign_page' in request.POST:
             return render(request, "CreateCampaign.html")
@@ -66,7 +66,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return redirect("/landing/", request)
+                return redirect("/", request)
 
 
 class Landing(View):
