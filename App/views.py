@@ -51,11 +51,28 @@ class Homescreen(View):
             else:
                 campaignName = request.POST['campaign_name']
                 type = request.POST['type']
-                campaignCode = request.POST['campaign_code']
-                owner = MyUser.objects.get(username__iexact=request.session['login'])
-                newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=campaignCode, owner=owner)
+                highest_code_campaign = Campaign.objects.all().order_by('-id')[:1].first()
+                highest_code = highest_code_campaign.campaignCode + 1
+                owner = request.session['login']
+                newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=highest_code, owner=owner)
                 newCampaign.save()
                 return render(request, "Homescreen.html", {"login": request.session['login']})
+
+        if request.method == 'POST' and 'my_campaigns' in request.POST:
+            # make the MyCampaigns html appear - need to pass the logged-in user's campaigns
+            my_campaigns = Campaign.objects.get(owner__iexact=request.session['login'])
+            return render(request, {'campaigns': my_campaigns})
+
+
+        if request.method == 'POST' and "delete_campaign" in request.POST:
+            campaignId = request.POST['campaignId']
+            campaign = Campaign.objects.get(id__iexact=campaignId)
+            campaign.delete()
+
+            my_campaigns = Campaign.objects.get(owner__iexact=request.session['login'])
+
+            # make the MyCampaigns html appear again
+            return render({'campaigns': my_campaigns})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
