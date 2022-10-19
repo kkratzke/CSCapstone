@@ -37,7 +37,7 @@ class MyUser(models.Model):
 class Campaign(models.Model):
     campaignName = models.CharField(max_length=150)
     type = models.CharField(max_length=15, choices=TYPES, default="Other")
-    campaignCode = models.CharField(max_length=20)
+    campaignCode = models.IntegerField(default=None)
     status = models.CharField(max_length=15, choices=STATUS, default="On going")
     owner = models.CharField(max_length=20)
 
