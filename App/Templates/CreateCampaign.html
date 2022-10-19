@@ -1,40 +1,84 @@
+{% load static %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/bootstrap.css' %}"
+    type="text/css"
+>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-
-        {% load static %}
-
-        <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}" media="screen">
+    <title>Create Campaign</title>
 </head>
 <body>
-    <div class = container>
-        <div>
-            <h1>Create Campaign</h1>
-            <form action="/" method="post"> {% csrf_token %}
-                <div class="user-pass">
-
-                    <input class="form-field" type="text" placeholder="Campaign Name" name="campaign_name" required>
-
-                    <select name="type">
-                        <option value="Medical">Medical</option>
-                        <option value="Memorial">Memorial</option>
-                        <option value="Emergency">Emergency</option>
-                        <option value="Education">Education</option>
-                        <option value="Other">Other</option>
-                    </select>
-
-                    <input class="form-field" type="text" placeholder="Campaign Code" name="campaign_code" required>
-
-                    <button type="submit" name="create_campaign">Submit</button>
-
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-6">
+                <form action="/" method="post" class="form-container ">{% csrf_token %}
+                    <h3>Create a Campaign</h3>
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-4">
+                            <img src="./static/images/profile-user.png" class="img-fluid campaign_img" alt="Responsive image">
+                        </div>
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label for="usernameInput">Campaign Name:</label>
+                                <input type="text" name="campaign_name" class="form-control" id="campaignInput" aria-describedby="campaignName" placeholder="Enter Name..." required>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label>Type of Campaign:</label>
+                                <select class="form-select form-select-lg" aria-label="Default select example" name="type">
+                                    <option selected>Select Type...</option>
+                                    <option value="Medical">Medical</option>
+                                    <option value="Memorial">Memorial</option>
+                                    <option value="Emergency">Emergency</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Other">Other</option>
+                                  </select required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mt-4">
+                            <label for="campaign_description">Description: </label>
+                            <textarea class="form-control" id="campaign_description" rows="8"></textarea>
+                        </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <button class="btn btn-secondary btn-block mt-3" onclick="history.go(-1)">Back</button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-primary btn-block mt-3" name="create_campaign">Finish</button>
+                        </div>
+                    </div>
+                    </div>
+                </form>
+                <div>
+                    <p class="error-message">{{message}}</p>
                 </div>
-            </form>
-            <div>
-                <p class="error-message">{{ message }}</p>
             </div>
         </div>
     </div>
 </body>
 </html>
+<style>
+body{
+    background-color: #FFFFFF;
+}
+.btn-primary{
+    background-color: #FFB400;
+    color: black;
+    width: 100%;
+}
+.btn-secondary{
+    width: 100%;
+}
+.form-container{
+    position: absolute;
+    top: 10%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 40px 0px;
+}
+</style>
