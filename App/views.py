@@ -42,6 +42,9 @@ class Homescreen(View):
 
         if request.method == 'POST' and 'create_campaign_page' in request.POST:
             return render(request, "CreateCampaign.html")
+        
+        if request.method == 'POST' and 'my_campaigns' in request.POST:
+            return render(request, "MyCampaigns.html")
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
