@@ -51,8 +51,12 @@ class Homescreen(View):
             else:
                 campaignName = request.POST['campaign_name']
                 type = request.POST['type']
-                highest_code_campaign = Campaign.objects.all().order_by('-id')[:1].first()
-                highest_code = highest_code_campaign.campaignCode + 1
+                highest_code_campaign = Campaign.objects.filter(campaignCode__gte=10000)
+                val = 10000
+                for x in highest_code_campaign:
+                    if x.campaignCode > val:
+                        val = x.campaignCode
+                highest_code = val + 1
                 owner = request.session['login']
                 newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=highest_code, owner=owner)
                 newCampaign.save()

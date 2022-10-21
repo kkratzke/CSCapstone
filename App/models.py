@@ -35,11 +35,11 @@ class MyUser(models.Model):
 
 
 class Campaign(models.Model):
-    campaignName = models.CharField(max_length=150)
+    campaignName = models.CharField(max_length=150, default=None)
     type = models.CharField(max_length=15, choices=TYPES, default="Other")
     campaignCode = models.IntegerField(default=None)
     status = models.CharField(max_length=15, choices=STATUS, default="On going")
-    owner = models.CharField(max_length=20)
+    owner = models.CharField(max_length=20, default=None)
 
     def str(self):
         return self.campaignName
