@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
-from .models import MyUser
+from django.conf import settings
+from .uploads import getNewName
+from django.http import HttpResponse
+from django.contrib import messages
 import datetime
 import hashlib
 from .functions import create_account, login, edit_profile
@@ -57,7 +60,19 @@ class Homescreen(View):
                 highest_code_campaign = Campaign.objects.all().order_by('-id')[:1].first()
                 highest_code = highest_code_campaign.campaignCode + 1
                 owner = request.session['login']
-                newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=highest_code, owner=owner)
+                image = request.FILES.get('image')
+
+                file = image
+                new_name = getNewName('image')
+                where = '%s/campaign/%s' % (settings.MEDIA_ROOT, new_name)
+
+                content = file.chunks()
+                with open(where, 'wb') as f:
+                    for i in content:
+                        f.write(i)
+
+                newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=highest_code, owner=owner,
+                                       image=image)
                 newCampaign.save()
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
@@ -121,3 +136,28 @@ class PageJump(View):
 
     def post(selfself, request):
         return redirect("/", request)
+
+
+class PicUpload(View):
+    def get(self, request):
+        return render(request, "PicUpload.html", {})
+
+    def post(selfself, request):
+        if request.method == 'POST':
+            img = Img(img_url=request.FILES.get('img'))
+            img.save()
+        return render(request, 'PicUpload.html')
+
+
+def upload_handle(request):
+    file = request.FILES['image']
+
+    new_name = getNewName('img_url')
+
+    where = '%s/users/%s' % (settings.MEDIA_ROOT, new_name)
+
+    content = file.chunks()
+    with open(where, 'wb') as f:
+        for i in content:
+            f.write(i)
+    return HttpResponse('ok')

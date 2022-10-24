@@ -13,7 +13,7 @@
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-6">
-                <form action="/" method="post" class="form-container ">{% csrf_token %}
+                <form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
                     <h3>Create a Campaign</h3>
                     <hr>
                     <div class="row align-items-center">
@@ -43,6 +43,7 @@
                             <label for="campaign_description">Description: </label>
                             <textarea class="form-control" id="campaign_description" rows="8"></textarea>
                         </div>
+                        <div>Upload campaign cover <input type="file" name="image"></div>
                     <div class="row">
                         <div class="col-6">
                             <button class="btn btn-secondary btn-block mt-3" onclick="history.go(-1)">Back</button>

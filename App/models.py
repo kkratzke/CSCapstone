@@ -40,7 +40,11 @@ class Campaign(models.Model):
     campaignCode = models.IntegerField(default=None)
     status = models.CharField(max_length=15, choices=STATUS, default="On going")
     owner = models.CharField(max_length=20)
+    image = models.FileField(upload_to='campaign', default=None)
 
     def str(self):
         return self.campaignName
 
+
+class Img(models.Model):
+    img_url = models.ImageField(upload_to='users', default=None)
