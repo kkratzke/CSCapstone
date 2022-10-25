@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
-from .models import MyUser
+from .models import MyUser, Campaign
 import datetime
 import hashlib
 from .functions import create_account, login, edit_profile
@@ -11,7 +11,8 @@ class Homescreen(View):
 
     def get(self, request):
         request.session['login'] = None
-        return render(request, "Homescreen.html", {})
+        index = Campaign.objects.all()[:3]
+        return render(request, "Homescreen.html", {"campaign_index": index})
 
     def post(self, request):
         if request.method == 'POST' and 'login_page' in request.POST:
@@ -65,7 +66,6 @@ class Homescreen(View):
             # make the MyCampaigns html appear - need to pass the logged-in user's campaigns
             my_campaigns = Campaign.objects.get(owner__iexact=request.session['login'])
             return render(request, {'campaigns': my_campaigns})
-
 
         if request.method == 'POST' and "delete_campaign" in request.POST:
             campaignId = request.POST['campaignId']
