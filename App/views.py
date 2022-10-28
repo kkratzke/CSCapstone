@@ -3,7 +3,10 @@ from math import floor,ceil
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
-from .models import MyUser, Campaign
+from django.conf import settings
+from .uploads import getNewName
+from django.http import HttpResponse
+from django.contrib import messages
 import datetime
 import hashlib
 from .functions import create_account, login, edit_profile
@@ -76,8 +79,20 @@ class Homescreen(View):
                         val = x.campaign_code
                 highest_code = val + 1
                 owner = MyUser.objects.filter(username__iexact=request.session['login']).first()
+                image = request.FILES.get('image')
+                file = image
+                new_name = getNewName('image')
+                where = '%s/campaign/%s' % (settings.MEDIA_ROOT, new_name)
+                content = file.chunks()
+                with open(where, 'wb') as f:
+                    for i in content:
+                        f.write(i)
+
                 newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code, campaign_owner=owner, campaign_description=desc)
+                newCampaignPictures = CampaignPictures(campaign_code=newCampaign, campaign_pic=image)
                 newCampaign.save()
+                newCampaignPictures.save()
+
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "delete_campaign" in request.POST:
@@ -143,3 +158,28 @@ class PageJump(View):
 
     def post(selfself, request):
         return redirect("/", request)
+
+
+class PicUpload(View):
+    def get(self, request):
+        return render(request, "PicUpload.html", {})
+
+    def post(selfself, request):
+        if request.method == 'POST':
+            img = Img(img_url=request.FILES.get('img'))
+            img.save()
+        return render(request, 'PicUpload.html')
+
+
+def upload_handle(request):
+    file = request.FILES['image']
+
+    new_name = getNewName('img_url')
+
+    where = '%s/users/%s' % (settings.MEDIA_ROOT, new_name)
+
+    content = file.chunks()
+    with open(where, 'wb') as f:
+        for i in content:
+            f.write(i)
+    return HttpResponse('ok')
