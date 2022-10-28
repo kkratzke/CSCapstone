@@ -1,9 +1,12 @@
-from math import floor, ceil
+from math import floor,ceil
 
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
-from .models import MyUser, Campaign
+from django.conf import settings
+from .uploads import getNewName
+from django.http import HttpResponse
+from django.contrib import messages
 import datetime
 import hashlib
 from .functions import create_account, login, edit_profile
@@ -31,8 +34,7 @@ class Homescreen(View):
                 return render(request, "Login.html", {"message": "Incorrect Login credentials"})
             else:
                 request.session['login'] = request.POST['uname']
-                index = Campaign.objects.all()[:3]
-                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": index})
+                return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "create_account_button" in request.POST:
             ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
@@ -46,20 +48,20 @@ class Homescreen(View):
 
         if request.method == 'POST' and 'create_campaign_page' in request.POST:
             return render(request, "CreateCampaign.html")
-
+        
         if request.method == 'POST' and 'my_campaigns' in request.POST:
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
             length = len(lst)
             lst1 = []
             lst2 = []
-            for i in range(ceil(length / 2)):
+            for i in range(ceil(length/2) ):
                 lst1.append(lst[i])
 
-            for i in range(ceil(length / 2), length):
+            for i in range(ceil(length/2) , length):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"login": request.session['login'], "first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -77,15 +79,25 @@ class Homescreen(View):
                         val = x.campaign_code
                 highest_code = val + 1
                 owner = MyUser.objects.filter(username__iexact=request.session['login']).first()
-                newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code,
-                                       campaign_owner=owner, campaign_description=desc)
+                image = request.FILES.get('image')
+                file = image
+                new_name = getNewName('image')
+                where = '%s/campaign/%s' % (settings.MEDIA_ROOT, new_name)
+                content = file.chunks()
+                with open(where, 'wb') as f:
+                    for i in content:
+                        f.write(i)
+
+                newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code, campaign_owner=owner, campaign_description=desc)
+                newCampaignPictures = CampaignPictures(campaign_code=newCampaign, campaign_pic=image)
                 newCampaign.save()
-                index = Campaign.objects.all()[:3]
-                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": index})
+                newCampaignPictures.save()
+
+                return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
-            # campaign = Campaign.objects.get(id__iexact=campaignId)
+            #campaign = Campaign.objects.get(id__iexact=campaignId)
             campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
             campaign.delete()
 
@@ -100,7 +112,7 @@ class Homescreen(View):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"login": request.session['login'], "first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
@@ -120,8 +132,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                index = Campaign.objects.all()[:3]
-                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": index})
+                return render(request, "Homescreen.html", {"login": request.session['login']})
 
 
 class Landing(View):
@@ -130,17 +141,12 @@ class Landing(View):
 
     def post(selfself, request):
         return redirect("/", request)
-
-
 class LogIn(View):
     def get(self, request):
         return render(request, "Login.html", {})
-
     def post(self, request):
         if request.method == 'POST' and 'create_account_page' in request.POST:
             return redirect("/createaccount/")
-
-
 class CreateAccount(View):
     def get(self, request):
         return render(request, "CreateAccount.html")
@@ -152,3 +158,28 @@ class PageJump(View):
 
     def post(selfself, request):
         return redirect("/", request)
+
+
+class PicUpload(View):
+    def get(self, request):
+        return render(request, "PicUpload.html", {})
+
+    def post(selfself, request):
+        if request.method == 'POST':
+            img = Img(img_url=request.FILES.get('img'))
+            img.save()
+        return render(request, 'PicUpload.html')
+
+
+def upload_handle(request):
+    file = request.FILES['image']
+
+    new_name = getNewName('img_url')
+
+    where = '%s/users/%s' % (settings.MEDIA_ROOT, new_name)
+
+    content = file.chunks()
+    with open(where, 'wb') as f:
+        for i in content:
+            f.write(i)
+    return HttpResponse('ok')
