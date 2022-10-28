@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload your picture (Testing)</title>
+</head>
+<body>
+    <h1> Upload your picture (Testing) </h1>
+    <form action="{% url 'upload_handle'%}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>Upload your image<input type="file" name="img"></p>
+        <input type="submit" value="Upload">
+    </form>
+
+<form>
+    {% csrf_token %}
+    <div>用户名:<input id="name-input" type="text"></div>
+    <div>头像<input id="avatar-input" type="file"></div>
+    <input id="submit-btn" type="button" value="提交">
+</form>
+
+<script src="/static/js/jquery-3.2.1.min.js"></script>
+
+<script>
+    $('#submit-btn').on('click',function () {
+        formdata = new FormData();
+        formdata.append('username',$('#name-input').val());
+        formdata.append("avatar",$("#avatar")[0].files[0]);
+        formdata.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
+         $.ajax({processData:false,contentType:false,url:'/upload',type:'post',data:formdata,success:function (arg)
+             {if (arg.state == 1){ alert('成功！') }else { alert('失败！') } } }) });
+
+</script>
+</body>
+</html>
