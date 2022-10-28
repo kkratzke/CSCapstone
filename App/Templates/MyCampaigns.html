@@ -15,34 +15,52 @@
 <body>
     <div class="row"><h1>My Campaigns</h1></div>
     <hr>
-    <div class="row">
-        <div class="col-4">
-            <div class="card-fluid">
-              <img class="card-img-top campaign_img" src="..." alt="Card image cap">
-              <div class="card-body">
-                <h5 class="card-title campaign_name">Card title</h5>
-                <p class="card-text campaign_description">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="card-fluid">
-              <img class="card-img-top campaign_img" src="..." alt="Card image cap">
-              <div class="card-body">
-                <h5 class="card-title campaign_name">Card title</h5>
-                <p class="card-text campaign_description">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="card-fluid">
-              <img class="card-img-top campaign_img" src="..." alt="Card image cap">
-              <div class="card-body">
-                <h5 class="card-title campaign_name">Card title</h5>
-                <p class="card-text campaign_description">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-        </div>
-    </div>
+    <table width="100%">
+        <tr>
+            <td>
+                <div class="column">
+                {% for campaign in first_half %}
+                    <div class="col-4">
+                    <div class="card-fluid" style="border:1px solid black" >
+                      <img class="card-img-top campaign_img" src="..." alt="Card image cap">
+                      <div class="card-body" >
+                        <h5 class="card-title campaign_name">{{ campaign.campaign_name}}</h5>
+                        <p class="card-text campaign_description">Description: {{ campaign.campaign_description }}</p>
+                        <form action="/" method="post"> {% csrf_token %}
+                        <button type="submit" name="delete_campaign" class="btn btn-danger btn-block">Delete Campaign</button>
+                          <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
+                        </form>
+                        <button>Edit Campaign</button>
+                      </div>
+                    </div>
+                </div>
+                <br>
+                {% endfor %}
+                </div>
+            </td>
+            <td>
+                <div class="column">
+                {% for campaign in second_half %}
+                    <div class="col-4">
+                    <div class="card-fluid" style="border:1px solid black">
+                      <img class="card-img-top campaign_img" src="..." alt="Card image cap">
+                      <div class="card-body" >
+                        <h5 class="card-title campaign_name">{{ campaign.campaign_name}}</h5>
+                        <p class="card-text campaign_description">Description: {{ campaign.campaign_description }}</p>
+                        <form action="/" method="post"> {% csrf_token %}
+                        <button type="submit" name="delete_campaign" class="btn btn-danger btn-block">Delete Campaign</button>
+                          <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
+                        </form>
+                        <button>Edit Campaign</button>
+                      </div>
+                    </div>
+                </div>
+                <br>
+                {% endfor %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
 </body>
 </html>
