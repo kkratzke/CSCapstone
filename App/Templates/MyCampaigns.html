@@ -13,6 +13,98 @@
     <title>My Campaigns</title>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg rounded shadow mt-2">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">
+                    Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                    Explore
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  Popular
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link">
+                    Help
+                </a>
+              </li>
+            </ul>
+              {% if login is None %}
+                <a class="nav-link" href="#">
+                <form action="/" method="post"> {% csrf_token %}
+                  <div class="pt-2">
+                    <button type="button submit" class="btn primary-btn pr-1" name="login_page">Login</button>
+                  </div>
+                </form>
+                </a>
+              {% endif %}
+
+              {% if login is not None %}
+              <div class="row align-items-center">
+                <div class="col-3">
+                 <img src="./static/images/profile-user.png" alt="" class="user-profile">
+                </div>
+                <div class="col-6">
+                  <div class="dropdown">
+                    <a class="nav-link dropdown-toggle pr-2" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      My Profile
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li>
+                        <a href="#" class="nav-link">
+                          <form action="/" method="post"> {% csrf_token %}
+                            <div class="d-grid gap-2">
+                              <button type="button submit" class="btn btn-light btn-border-width:10px"name="my_campaigns">My Campaigns</button>
+                            </div>
+                          </form>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" class="nav-link">
+                          <form action="/" method="post"> {% csrf_token %}
+                            <div class="d-grid gap-2">
+                              <button type="button submit" class="btn btn-light"name="create_campaign_page">Create Campaign</button>
+                            </div>
+                          </form>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" class="nav-link" name="edit_profile_page">
+                          <form action="/" method="post"> {% csrf_token %}
+                            <div class="d-grid gap-2">
+                              <button type="button submit" class="btn btn-light"name="edit_profile_page">Edit Profile</button>
+                            </div>
+                          </form>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" class="nav-link">
+                          <form action="/" method="post"> {% csrf_token %}
+                            <div class="d-grid gap-2">
+                              <button type="button submit" class="btn btn-danger btn-block"name="logout">Log Out</button>
+                            </div>
+                          </form>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+          </div>
+        </div>
+
+    </nav>
     <div class="row"><h1>My Campaigns</h1></div>
     <hr>
     <table width="100%">
@@ -64,3 +156,16 @@
 
 </body>
 </html>
+<style>
+  .user-profile{
+  width: 35px;
+  }
+  .navbar{
+    width: 75%;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #FFFFFF;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

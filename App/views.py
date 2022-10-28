@@ -31,7 +31,8 @@ class Homescreen(View):
                 return render(request, "Login.html", {"message": "Incorrect Login credentials"})
             else:
                 request.session['login'] = request.POST['uname']
-                return render(request, "Homescreen.html", {"login": request.session['login']})
+                index = Campaign.objects.all()[:3]
+                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": index})
 
         if request.method == 'POST' and "create_account_button" in request.POST:
             ret = create_account(request.POST['uname'], request.POST['email'], request.POST['first_name'],
@@ -58,7 +59,7 @@ class Homescreen(View):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"login": request.session['login'], "first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -79,7 +80,8 @@ class Homescreen(View):
                 newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code,
                                        campaign_owner=owner, campaign_description=desc)
                 newCampaign.save()
-                return render(request, "Homescreen.html", {"login": request.session['login']})
+                index = Campaign.objects.all()[:3]
+                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": index})
 
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
@@ -98,7 +100,7 @@ class Homescreen(View):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"login": request.session['login'], "first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
@@ -118,7 +120,8 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return render(request, "Homescreen.html", {"login": request.session['login']})
+                index = Campaign.objects.all()[:3]
+                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": index})
 
 
 class Landing(View):
