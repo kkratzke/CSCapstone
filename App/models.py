@@ -23,7 +23,7 @@ STATUS = (
 
 
 class MyUser(models.Model):
-    username = models.CharField(max_length=20, default=None)
+    username = models.CharField(max_length=20, default=None, unique=True)
     last_name = models.CharField(max_length=20, default=None)
     first_name = models.CharField(max_length=20, default=None)
     email = models.CharField(max_length=30, default=None)
@@ -35,16 +35,14 @@ class MyUser(models.Model):
 
 
 class Campaign(models.Model):
-    campaignName = models.CharField(max_length=150)
-    type = models.CharField(max_length=15, choices=TYPES, default="Other")
-    campaignCode = models.IntegerField(default=None)
-    status = models.CharField(max_length=15, choices=STATUS, default="On going")
-    owner = models.CharField(max_length=20)
-    image = models.FileField(upload_to='campaign', default=None)
+    campaign_code = models.PositiveBigIntegerField(primary_key=True, db_column="campaign_code")
+    campaign_name = models.CharField(max_length=150)
+    campaign_type = models.CharField(max_length=15, choices=TYPES, default="Other")
+    campaign_status = models.CharField(max_length=15, choices=STATUS, default="On going")
+    campaign_owner = models.ForeignKey(to=MyUser, to_field='username', on_delete=models.CASCADE,
+                                       db_column="campaign_owner")
+    campaign_description = models.CharField(max_length=500, blank=True)
 
     def str(self):
         return self.campaignName
 
-
-class Img(models.Model):
-    img_url = models.ImageField(upload_to='users', default=None)
