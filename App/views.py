@@ -1,3 +1,5 @@
+from math import floor,ceil
+
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
@@ -45,7 +47,18 @@ class Homescreen(View):
             return render(request, "CreateCampaign.html")
         
         if request.method == 'POST' and 'my_campaigns' in request.POST:
-            return render(request, "MyCampaigns.html")
+            lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
+            length = len(lst)
+            lst1 = []
+            lst2 = []
+            for i in range(ceil(length/2) ):
+                lst1.append(lst[i])
+
+            for i in range(ceil(length/2) , length):
+                lst2.append(lst[i])
+            print(lst1)
+            print(lst2)
+            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -55,31 +68,36 @@ class Homescreen(View):
             else:
                 campaignName = request.POST['campaign_name']
                 type = request.POST['type']
-                highest_code_campaign = Campaign.objects.filter(campaignCode__gte=10000)
+                desc = request.POST['description']
+                highest_code_campaign = Campaign.objects.filter(campaign_code__gte=10000)
                 val = 10000
                 for x in highest_code_campaign:
-                    if x.campaignCode > val:
-                        val = x.campaignCode
+                    if x.campaign_code > val:
+                        val = x.campaign_code
                 highest_code = val + 1
-                owner = request.session['login']
-                newCampaign = Campaign(campaignName=campaignName, type=type, campaignCode=highest_code, owner=owner)
+                owner = MyUser.objects.filter(username__iexact=request.session['login']).first()
+                newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code, campaign_owner=owner, campaign_description=desc)
                 newCampaign.save()
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
-        if request.method == 'POST' and 'my_campaigns' in request.POST:
-            # make the MyCampaigns html appear - need to pass the logged-in user's campaigns
-            my_campaigns = Campaign.objects.get(owner__iexact=request.session['login'])
-            return render(request, {'campaigns': my_campaigns})
-
         if request.method == 'POST' and "delete_campaign" in request.POST:
-            campaignId = request.POST['campaignId']
-            campaign = Campaign.objects.get(id__iexact=campaignId)
+            cd = request.POST['removal']
+            #campaign = Campaign.objects.get(id__iexact=campaignId)
+            campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
             campaign.delete()
 
-            my_campaigns = Campaign.objects.get(owner__iexact=request.session['login'])
+            lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
+            length = len(lst)
+            lst1 = []
+            lst2 = []
+            for i in range(floor(length / 2) + 1):
+                lst1.append(lst[i])
 
-            # make the MyCampaigns html appear again
-            return render({'campaigns': my_campaigns})
+            for i in range(floor(length / 2) + 1, length):
+                lst2.append(lst[i])
+            print(lst1)
+            print(lst2)
+            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
