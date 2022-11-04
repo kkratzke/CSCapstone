@@ -15,15 +15,15 @@ from .functions import create_account, login, edit_profile
 class Homescreen(View):
 
     def get(self, request):
-        request.session['login'] = None
         index = Campaign.objects.all()[:3]
-        return render(request, "Homescreen.html", {"campaign_index": index})
+        return render(request, "Homescreen.html", {"campaign_index": index, 'login': request.session['login']})
 
     def post(self, request):
         if request.method == 'POST' and 'login_page' in request.POST:
             return render(request, "Login.html")
 
         if request.method == 'POST' and 'logout' in request.POST:
+            request.session['login'] = None
             return redirect('/', request)
 
         if request.method == 'POST' and 'create_account_page' in request.POST:
@@ -61,7 +61,38 @@ class Homescreen(View):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"login": request.session['login'], "first_half": lst1, 'second_half': lst2})
+
+        if request.method == 'POST' and "search_page" in request.POST:
+            return render(request, "Search.html", {'campaigns': [], "login": request.session['login']})
+
+        if request.method == 'POST' and "campaign_search" in request.POST:
+            search_type = request.POST['search_type']
+            info = request.POST['search_info']
+            newList = []
+            if search_type == 'by_code':
+                info = int(info)
+                newList = Campaign.objects.filter(campaign_code__exact=info)
+            else:
+                info = str(info)
+                info = info.lower()
+                if search_type == 'by_desc':
+                    tempList = Campaign.objects.all()
+                    for c in tempList:
+                        if str(c.campaign_description).lower().__contains__(info):
+                            newList.append(c)
+                else:  #search_type == 'by_title':
+                    tempList = Campaign.objects.all()
+                    for c in tempList:
+                        if str(c.campaign_name).lower().__contains__(info):
+                            newList.append(c)
+
+            return render(request, "Search.html", {'campaigns': newList, "login": request.session['login']})
+
+        if request.method == 'POST' and "go_home" in request.POST:
+            index = Campaign.objects.all()[:3]
+            return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login']})
+
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -79,19 +110,20 @@ class Homescreen(View):
                         val = x.campaign_code
                 highest_code = val + 1
                 owner = MyUser.objects.filter(username__iexact=request.session['login']).first()
-                image = request.FILES.get('image')
+                """image = request.FILES.get('image')
                 file = image
                 new_name = getNewName('image')
-                where = '%s/campaign/%s' % (settings.MEDIA_ROOT, new_name)
+                where = '%s/campaign_pic/%s' % (settings.MEDIA_ROOT, new_name)
                 content = file.chunks()
                 with open(where, 'wb') as f:
                     for i in content:
-                        f.write(i)
+                        f.write(i)"""
 
                 newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code, campaign_owner=owner, campaign_description=desc)
-                newCampaignPictures = CampaignPictures(campaign_code=newCampaign, campaign_pic=image)
+                #newCampaignPictures = CampaignPictures(campaign_code=newCampaign, campaign_pic=image)
+                #newCampaignPictures.save()
                 newCampaign.save()
-                newCampaignPictures.save()
+
 
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
@@ -112,7 +144,7 @@ class Homescreen(View):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"login": request.session['login'], "first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
