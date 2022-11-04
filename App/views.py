@@ -143,9 +143,7 @@ class Homescreen(View):
                path = os.path.join(location, file)
                os.remove(path)
 
-
             campaign.delete()
-
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
             length = len(lst)
@@ -204,17 +202,6 @@ class PageJump(View):
 
     def post(selfself, request):
         return redirect("/", request)
-
-
-class PicUpload(View):
-    def get(self, request):
-        return render(request, "PicUpload.html", {})
-
-    def post(selfself, request):
-        if request.method == 'POST':
-            img = Img(img_url=request.FILES.get('img'))
-            img.save()
-        return render(request, 'PicUpload.html')
 
 
 def upload_handle(request):
