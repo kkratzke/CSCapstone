@@ -139,7 +139,8 @@ class Homescreen(View):
                file = str(campaign.campaign_code) + ".png"
                location = '%s/campaign_pic' % (settings.MEDIA_ROOT)
                path = os.path.join(location, file)
-               os.remove(path)
+               if os.access(path, os.F_OK):
+                  os.remove(path)
 
             campaign.delete()
 
