@@ -26,6 +26,4 @@ urlpatterns = [
     path('createaccount/', CreateAccount.as_view(), name="create_account_page"),
     path('explore/', ExplorePage.as_view(), name='explore'),
     path('pagejump/', PageJump.as_view(), name='PageJump'),
-    path('picupload/', PicUpload.as_view(), name='PicUpload'),
-    path('upload_handle/', upload_handle, name='upload_handle'),
 ]
