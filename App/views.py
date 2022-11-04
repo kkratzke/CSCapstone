@@ -5,9 +5,7 @@ from django.views import View
 from App.models import *
 from django.conf import settings
 from .uploads import getNewName
-from django.http import HttpResponse
 from django.contrib import messages
-import datetime
 import hashlib
 import os
 
@@ -98,7 +96,6 @@ class Homescreen(View):
                 newCampaign.save()
                 newCampaignPictures.save()
 
-
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "search_page" in request.POST:
@@ -136,7 +133,8 @@ class Homescreen(View):
             #campaign = Campaign.objects.get(id__iexact=campaignId)
             campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
             campaignPic = CampaignPictures.objects.filter(campaign_code__exact=cd).first()
-            if campaignPic != None:
+
+            if campaignPic is not None:
                campaignPic.delete()
                file = str(campaign.campaign_code) + ".png"
                location = '%s/campaign_pic' % (settings.MEDIA_ROOT)
@@ -202,17 +200,3 @@ class PageJump(View):
 
     def post(selfself, request):
         return redirect("/", request)
-
-
-def upload_handle(request):
-    file = request.FILES['image']
-
-    new_name = getNewName('img_url')
-
-    where = '%s/users/%s' % (settings.MEDIA_ROOT, new_name)
-
-    content = file.chunks()
-    with open(where, 'wb') as f:
-        for i in content:
-            f.write(i)
-    return HttpResponse('ok')
