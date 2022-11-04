@@ -4,16 +4,15 @@
     href="{% static 'css/bootstrap.css' %}"
     type="text/css"
 >
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Campaigns</title>
+    <title>Campaign Search</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg rounded shadow mt-2">
+<nav class="navbar navbar-expand-lg rounded shadow mt-2">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Navbar</a>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -105,58 +104,54 @@
         </div>
 
     </nav>
-    <div class="row"><h1>My Campaigns</h1></div>
+<form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
+    <h3>Search For Campaign</h3>
     <hr>
-    <table width="100%">
-        <tr>
-            <td>
-                <div class="column">
-                {% for campaign in first_half %}
-                    <div class="col-4">
-                    <div class="card-fluid" style="border:1px solid black" >
-                      <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="" class="img homepage-img">
+    <div class="form-group mt-4">
+      <div class="row align-items-center">
+        <label>Search Method</label>
+        <select required class="form-select form-select-lg" aria-label="Default select example" name="search_type">
+            <option selected value="by_code">Campaign Code</option>
+            <option value="by_desc">Campaign Description</option>
+            <option value="by_title">Campaign Title</option>
+         </select>
+         <div class="form-group">
+            <label for="usernameInput">Search Parameter:</label>
+            <input type="text" name="search_info" class="form-control" id="campaignInput" aria-describedby="campaignName" placeholder="Enter Information..." required>
+        </div>
       </div>
-                      <div class="card-body" >
-                        <h5 class="card-title campaign_name">{{ campaign.campaign_name}}</h5>
-                        <p class="card-text campaign_description">Description: {{ campaign.campaign_description }}</p>
-                        <form action="/" method="post"> {% csrf_token %}
-                        <button type="submit" name="delete_campaign" class="btn btn-danger btn-block">Delete Campaign</button>
-                          <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
-                        </form>
-                        <button>Edit Campaign</button>
-                      </div>
-                    </div>
-                </div>
-                <br>
-                {% endfor %}
-                </div>
-            </td>
-            <td>
-                <div class="column">
-                {% for campaign in second_half %}
-                    <div class="col-4">
-                    <div class="card-fluid" style="border:1px solid black">
-                      <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="Card image cap">
-                      <div class="card-body" >
-                        <h5 class="card-title campaign_name">{{ campaign.campaign_name}}</h5>
-                        <p class="card-text campaign_description">Description: {{ campaign.campaign_description }}</p>
-                        <form action="/" method="post"> {% csrf_token %}
-                        <button type="submit" name="delete_campaign" class="btn btn-danger btn-block">Delete Campaign</button>
-                          <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
-                        </form>
-                        <button>Edit Campaign</button>
-                      </div>
-                    </div>
-                </div>
-                <br>
-                {% endfor %}
-                </div>
-            </td>
-        </tr>
-    </table>
+      <div class="col-6">
+          <button class="btn btn-primary btn-block mt-3" name="campaign_search">GO</button>
+      </div>
+    </div>
+</form>
+    <div>
+        Results:
+        <table border="1px solid black">
+            <tr>
+                <td>
+                    <b><u>Name</u></b>
+                </td>
+                <td>
+                    <b><u>Description</u></b>
+                </td>
+            </tr>
+            {% for campaign in campaigns %}
+            <tr>
+                <td>
+                    {{ campaign.campaign_name }}
+                </td>
+                <td>
+                    {{ campaign.campaign_description }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
 </body>
 </html>
+
 <style>
   .user-profile{
   width: 35px;
@@ -167,6 +162,12 @@
     margin-left: auto;
     background-color: #FFFFFF;
   }
+  table, th, td {
+    border: 1px solid black;
+    padding: 15px
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
