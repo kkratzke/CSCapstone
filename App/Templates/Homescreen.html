@@ -29,9 +29,11 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Explore
-                </a>
+                <form action="/" method="post"> {% csrf_token %}
+                  <a class="nav-link" href="explore/" name="explore">
+                      Explore
+                  </a>
+                </form>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">
@@ -108,7 +110,6 @@
               {% endif %}
           </div>
         </div>
-
     </nav>
     <div class="row mt-1 ml-1">
       <div class="col-7">
