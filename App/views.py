@@ -9,6 +9,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 import datetime
 import hashlib
+import os
+
 from .functions import create_account, login, edit_profile
 
 
@@ -80,18 +82,22 @@ class Homescreen(View):
                 highest_code = val + 1
                 owner = MyUser.objects.filter(username__iexact=request.session['login']).first()
                 image = request.FILES.get('image')
+                newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code,
+                                       campaign_owner=owner, campaign_description=desc)
                 file = image
-                new_name = getNewName('image')
-                where = '%s/campaign/%s' % (settings.MEDIA_ROOT, new_name)
+                new_name = getNewName('image', newCampaign.campaign_code)
+                where = '%s/campaign_pic/%s' % (settings.MEDIA_ROOT, new_name)
+
                 content = file.chunks()
                 with open(where, 'wb') as f:
                     for i in content:
                         f.write(i)
 
-                newCampaign = Campaign(campaign_name=campaignName, campaign_type=type, campaign_code=highest_code, campaign_owner=owner, campaign_description=desc)
-                newCampaignPictures = CampaignPictures(campaign_code=newCampaign, campaign_pic=image)
+                newCampaignPictures = CampaignPictures(campaign_code=newCampaign, campaign_pic=new_name)
+
                 newCampaign.save()
                 newCampaignPictures.save()
+
 
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
@@ -99,7 +105,17 @@ class Homescreen(View):
             cd = request.POST['removal']
             #campaign = Campaign.objects.get(id__iexact=campaignId)
             campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
+            campaignPic = CampaignPictures.objects.filter(campaign_code__exact=cd).first()
+            if campaignPic != None:
+               campaignPic.delete()
+               file = str(campaign.campaign_code) + ".png"
+               location = '%s/campaign_pic' % (settings.MEDIA_ROOT)
+               path = os.path.join(location, file)
+               os.remove(path)
+
+
             campaign.delete()
+
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
             length = len(lst)

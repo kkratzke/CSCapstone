@@ -22,7 +22,8 @@
                 {% for campaign in first_half %}
                     <div class="col-4">
                     <div class="card-fluid" style="border:1px solid black" >
-                      <img class="card-img-top campaign_img" src="..." alt="Card image cap">
+                      <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="" class="img homepage-img">
+      </div>
                       <div class="card-body" >
                         <h5 class="card-title campaign_name">{{ campaign.campaign_name}}</h5>
                         <p class="card-text campaign_description">Description: {{ campaign.campaign_description }}</p>
@@ -43,7 +44,7 @@
                 {% for campaign in second_half %}
                     <div class="col-4">
                     <div class="card-fluid" style="border:1px solid black">
-                      <img class="card-img-top campaign_img" src="..." alt="Card image cap">
+                      <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="Card image cap">
                       <div class="card-body" >
                         <h5 class="card-title campaign_name">{{ campaign.campaign_name}}</h5>
                         <p class="card-text campaign_description">Description: {{ campaign.campaign_description }}</p>
