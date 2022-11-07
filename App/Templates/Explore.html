@@ -1,0 +1,107 @@
+{% load static %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/bootstrap.css' %}"
+    type="text/css"
+>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/3933ca2144.js" crossorigin="anonymous"></script>
+    <title>Explore</title>
+</head>
+<body>
+    <div class="row main mt-3">
+        <div class="col-2">
+            <h2>Explore</h2>
+            <ul class="nav-list mt-5">
+                <li>
+                    <p>Type</p>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="medical">
+                            <label for="medical">Medical</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="memorial">
+                            <label for="memorial">Memorial</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="emergency">
+                            <label for="emergency">Emergency</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="education">
+                            <label for="education">Education</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="other">
+                            <label for="other">Other</label>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="col-10 explore-contents">
+            <div class="row title">
+                <div class="col-4">
+                    <input type="text" class="form-control" placeholder="Search..." aria-label="search" aria-describedby="basic-addon2">
+                </div>
+            </div>
+            <div class="row white">
+                <div class="col-4">
+                    <div class="card my-4">
+                        <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="row">
+                                <h5 class="card-title font-weight-bold">A Popular Campaign</h5>
+                                <p>Type</p>
+                            </div>
+                          <p class="card-text">A long black shadow slid across the pavement near their feet and the five Venusians, very much startled, looked overhead. They were barely in time to see the huge gray form of the carnivore before it vanished behind a sign.</p>
+                          <hr>
+                          <div class="row">
+                            <p>0 <i class="fa-solid fa-eye"></i></p><p>0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
+                          </div>
+                          <a href="#" class="btn btn-primary go-to">Visit Campaign</a>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<style>
+
+    ul{
+        list-style: none;
+    }
+    .explore-contents{
+        background-color: #E6F1EB;
+    }
+    .card-img-top{
+        height: 250px;
+        border-radius: 20px;
+    }
+    .card{
+        border-radius: 20px;
+    }
+    .go-to{
+        width:100%;
+    }
+    .container{
+        width: 100%;
+    }
+    .navbar{
+        background-color: #fff;
+        height: 100vh;
+    }
+    body{
+        background-color: #fff;
+    }
+
+</style>

@@ -201,3 +201,31 @@ class PageJump(View):
 
     def post(selfself, request):
         return redirect("/", request)
+
+class ExplorePage(View):
+    def get(self, request):
+        return render(request, "Explore.html")
+
+class PicUpload(View):
+    def get(self, request):
+        return render(request, "PicUpload.html", {})
+
+    def post(selfself, request):
+        if request.method == 'POST':
+            img = Img(img_url=request.FILES.get('img'))
+            img.save()
+        return render(request, 'PicUpload.html')
+
+
+def upload_handle(request):
+    file = request.FILES['image']
+
+    new_name = getNewName('img_url')
+
+    where = '%s/users/%s' % (settings.MEDIA_ROOT, new_name)
+
+    content = file.chunks()
+    with open(where, 'wb') as f:
+        for i in content:
+            f.write(i)
+    return HttpResponse('ok')
