@@ -135,6 +135,9 @@
                 <td>
                     <b><u>Description</u></b>
                 </td>
+                <td>
+
+                </td>
             </tr>
             {% for campaign in campaigns %}
             <tr>
@@ -143,6 +146,11 @@
                 </td>
                 <td>
                     {{ campaign.campaign_description }}
+                </td>
+                <td>
+                    <form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
+                        <button class="btn btn-primary btn-block mt-3" name="view_campaign">View Campaign</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}
