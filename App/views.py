@@ -145,16 +145,6 @@ class Homescreen(View):
             campaign.delete()
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
-            length = len(lst)
-            lst1 = []
-            lst2 = []
-            for i in range(floor(length / 2) + 1):
-                lst1.append(lst[i])
-
-            for i in range(floor(length / 2) + 1, length):
-                lst2.append(lst[i])
-            print(lst1)
-            print(lst2)
             return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
