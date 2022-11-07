@@ -5,9 +5,7 @@ from django.views import View
 from App.models import *
 from django.conf import settings
 from .uploads import getNewName
-from django.http import HttpResponse
 from django.contrib import messages
-import datetime
 import hashlib
 import os
 
@@ -98,7 +96,6 @@ class Homescreen(View):
                 newCampaign.save()
                 newCampaignPictures.save()
 
-
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "search_page" in request.POST:
@@ -136,16 +133,16 @@ class Homescreen(View):
             #campaign = Campaign.objects.get(id__iexact=campaignId)
             campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
             campaignPic = CampaignPictures.objects.filter(campaign_code__exact=cd).first()
-            if campaignPic != None:
+
+            if campaignPic is not None:
                campaignPic.delete()
                file = str(campaign.campaign_code) + ".png"
                location = '%s/campaign_pic' % (settings.MEDIA_ROOT)
                path = os.path.join(location, file)
-               os.remove(path)
-
+               if os.access(path, os.F_OK):
+                  os.remove(path)
 
             campaign.delete()
-
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
             length = len(lst)
@@ -205,6 +202,9 @@ class PageJump(View):
     def post(selfself, request):
         return redirect("/", request)
 
+class ExplorePage(View):
+    def get(self, request):
+        return render(request, "Explore.html")
 
 class PicUpload(View):
     def get(self, request):
