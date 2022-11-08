@@ -235,16 +235,6 @@ def upload_handle(request):
             f.write(i)
     return HttpResponse('ok')
 
-def campaign_view(request, slug=None):
-    if slug is not None:
-        try:
-            campaign = Campaign.objects.filter(campaign_code__exact=slug).first()
-        except:
-            raise Http404
-    print(campaign)
-    return render(request, "ViewCampaign.html", {"campaign": campaign})
-
-
 
 def campaign_view(request, slug=None):
     if slug is not None:
