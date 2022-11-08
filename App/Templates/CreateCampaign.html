@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mt-4">
             <div class="col-12 col-sm-6">
                 <form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
                     <h3>Create a Campaign</h3>
@@ -43,8 +43,8 @@
                             <label for="campaign_description">Description: </label>
                             <textarea class="form-control" id="campaign_description" name="description" rows="8"></textarea>
                         </div>
-                        <div>Upload campaign cover <input type="file" name="image"></div>
                     <div class="row">
+                        <div><br><p>Upload your campaign cover</p><input type="file" name="image"><br><br></div>
                         <div class="col-6">
                             <button class="btn btn-secondary btn-block mt-3" onclick="history.go(-1)">Back</button>
                         </div>
@@ -64,18 +64,26 @@
 </html>
 <style>
 body{
-    background-color: #FFFFFF;
+    background: rgb(255,121,0);
+    background: linear-gradient(90deg, rgba(255,121,0,1) 0%, rgba(255,180,0,1) 91%);
 }
 .btn-primary{
     background-color: #FFB400;
+    border: 8px;
+    border-color: black;
     color: black;
     width: 100%;
 }
+.btn-primary:active,
+    .btn-primary:focus,
+    .btn-primary:hover{
+        background-color: #ffde8e!important;
+        color: black!important;
+    }
 .btn-secondary{
     width: 100%;
 }
 .form-container{
-    position: absolute;
     top: 10%;
     background: #fff;
     padding: 30px;

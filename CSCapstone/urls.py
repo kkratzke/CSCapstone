@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from App.views import Homescreen, Landing, LogIn, CreateAccount, PageJump, campaign_view
+from App.views import Homescreen, Landing, LogIn, CreateAccount, PageJump, PicUpload, upload_handle, ExplorePage, campaign_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('', Homescreen.as_view(), name='Homescreen'),
     path('login/', LogIn.as_view(), name='LogIn'),
     path('createaccount/', CreateAccount.as_view(), name="create_account_page"),
+    path('explore/', ExplorePage.as_view(), name='explore'),
     path('pagejump/', PageJump.as_view(), name='PageJump'),
     path('ViewCampaign/<int:slug>/', campaign_view)
 ]

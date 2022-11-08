@@ -98,7 +98,6 @@ class Homescreen(View):
                 newCampaign.save()
                 newCampaignPictures.save()
 
-
                 return render(request, "Homescreen.html", {"login": request.session['login']})
 
         if request.method == 'POST' and "search_page" in request.POST:
@@ -136,29 +135,29 @@ class Homescreen(View):
             #campaign = Campaign.objects.get(id__iexact=campaignId)
             campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
             campaignPic = CampaignPictures.objects.filter(campaign_code__exact=cd).first()
-            if campaignPic != None:
+
+            if campaignPic is not None:
                campaignPic.delete()
                file = str(campaign.campaign_code) + ".png"
                location = '%s/campaign_pic' % (settings.MEDIA_ROOT)
                path = os.path.join(location, file)
-               os.remove(path)
-
+               if os.access(path, os.F_OK):
+                  os.remove(path)
 
             campaign.delete()
-
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
             length = len(lst)
             lst1 = []
             lst2 = []
-            for i in range(floor(length / 2) + 1):
+            for i in range(ceil(length / 2)):
                 lst1.append(lst[i])
 
-            for i in range(floor(length / 2) + 1, length):
+            for i in range(ceil(length / 2), length):
                 lst2.append(lst[i])
             print(lst1)
             print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2, 'login':request.session['login']})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
@@ -205,6 +204,12 @@ class PageJump(View):
     def post(selfself, request):
         return redirect("/", request)
 
+class ExplorePage(View):
+    def get(self, request):
+        return render(request, "Explore.html")
+class ExplorePage(View):
+    def get(self, request):
+        return render(request, "Explore.html")
 
 class PicUpload(View):
     def get(self, request):
@@ -229,6 +234,16 @@ def upload_handle(request):
         for i in content:
             f.write(i)
     return HttpResponse('ok')
+
+def campaign_view(request, slug=None):
+    if slug is not None:
+        try:
+            campaign = Campaign.objects.filter(campaign_code__exact=slug).first()
+        except:
+            raise Http404
+    print(campaign)
+    return render(request, "ViewCampaign.html", {"campaign": campaign})
+
 
 
 def campaign_view(request, slug=None):
