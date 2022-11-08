@@ -5,7 +5,9 @@ from django.views import View
 from App.models import *
 from django.conf import settings
 from .uploads import getNewName
+from django.http import HttpResponse, Http404
 from django.contrib import messages
+import datetime
 import hashlib
 import os
 
@@ -205,6 +207,9 @@ class PageJump(View):
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html")
+class ExplorePage(View):
+    def get(self, request):
+        return render(request, "Explore.html")
 
 class PicUpload(View):
     def get(self, request):
@@ -229,3 +234,24 @@ def upload_handle(request):
         for i in content:
             f.write(i)
     return HttpResponse('ok')
+
+def campaign_view(request, slug=None):
+    if slug is not None:
+        try:
+            campaign = Campaign.objects.filter(campaign_code__exact=slug).first()
+        except:
+            raise Http404
+    print(campaign)
+    return render(request, "ViewCampaign.html", {"campaign": campaign})
+
+
+
+def campaign_view(request, slug=None):
+    if slug is not None:
+        try:
+            campaign = Campaign.objects.filter(campaign_code__exact=slug).first()
+        except:
+            raise Http404
+    print(campaign)
+    return render(request, "ViewCampaign.html", {"campaign": campaign})
+
