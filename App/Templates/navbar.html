@@ -4,9 +4,8 @@
     href="{% static 'css/bootstrap.css' %}"
     type="text/css"
 >
-
-
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -50,6 +49,11 @@
                   Search
                 </a>
               </li>
+              <form action="/" method="post"> {% csrf_token %}
+                  <div class="pt-2">
+                    <button type="button submit" name="search_page">Campaign Search</button>
+                  </div>
+              </form>
             </ul>
               {% if login is None %}
                 <a class="nav-link" href="#">
@@ -116,45 +120,6 @@
           </div>
         </div>
     </nav>
-    <div class="row mt-1 ml-1">
-      <div class="col-7">
-        <img src="./static/images/dashboard-img-1.png" alt="" class="img homepage-img">
-      </div>
-      <div class="col-4">
-        <h1>Get Started!</h1>
-        <p class="mr-1">He had disappointed himself more than anyone else. That wasn't to say that he hadn't disappointed others. The fact was that he had disappointed a lot of people who were close to him. The fact that they were disappointed in him was something that made him even more disappointed in himself. Yet here he was, about to do the exact same things that had caused all the disappointment in the first place because he didn't know what else to do.</p>
-      </div>
-    </div>
-    <div class="row mt-1 middle-element">
-      <div class="col-5 txt-col align-items-center">
-        <h1 class="mt-1 ml-1">Get Started!</h1>
-        <p class="ml-1">"Begin today!" That's all the note said. There was no indication from where it came or who may have written it. Had it been meant for someone else? Meghan 
-          looked around the room, but nobody made eye contact back. For a brief moment, she thought it might be a message for her to follow her dreams, but ultimately 
-          decided it was easier to ignore it as she crumpled it up and threw it away.</p>
-      </div>
-      <div class="col-7 img-col">
-        <img src="./static/images/dashboard-img-2.png" alt="" class="img homepage-img">
-      </div>
-    </div>
-    <div class="row mt-1">
-      <div class="row"><h1>Newest Campaign</h1></div>
-      <div class="row">
-        {% for campaign in campaign_index%}
-        <div class="col-4">
-          <div class="card-fluid">
-            <img class="card-img-top" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="Card image cap" style="width:100%;height:60%">
-            <div class="card-body">
-              <h5 class="card-title">{{ campaign.campaign_name }}</h5>
-              <p class="card-text">{{ campaign.campaign_description }}</p>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-        </div>
-      </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
 </body>
 </html>
 <style>

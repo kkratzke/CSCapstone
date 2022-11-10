@@ -84,4 +84,8 @@ def edit_profile(email, first, last, pass1, pass2, owner):
 
     return message
 
+def getNewName(file_type, name):
 
+    new_name = str(name) + '.png'
+
+    return new_name
