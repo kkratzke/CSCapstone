@@ -1,4 +1,5 @@
 from django.db import models
+
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME
 from django.core.validators import validate_image_file_extension
 
@@ -35,6 +36,55 @@ class MyUser(models.Model):
     def str(self):
         return self.username
 
+    def delete_user(self, user_to_delete: "MyUser"):
+        if self.permission_to_delete_user(user_to_delete):
+            try:
+                user_to_delete.delete()
+            except MyUser.DoesNotExist:
+                return f"User ID # {user_to_delete.id} does not exist"
+            else:
+                return f"User account for {user_to_delete.username} has been deleted"
+        else:
+            return f"You don't have permission to delete this user's account"
+
+    def delete_user_pic(self, deletee: "MyUser"):
+        if self.permission_to_delete_user(deletee):
+            UserPictures.objects.get(id=deletee).user_pic.delete()
+            return f"The user picture for {deletee.username} has been deleted"
+        else:
+            return "You don't have permission to delete this user's picture"
+
+    def delete_profile_banner(self, deletee: "MyUser"):
+        if self.permission_to_delete_user(deletee):
+            UserPictures.objects.get(id=deletee).profile_banner.delete()
+            return f"The profile banner for {deletee.username} has been deleted"
+        else:
+            return "You don't have permission to delete this user's profile banner"
+
+    def delete_campaign(self, code_number):
+        if self.permission_to_delete_campaign(code_number):
+            try:
+                campaign_to_delete = Campaign.objects.get(campaign_code=code_number)
+            except Campaign.DoesNotExist:
+                return f"Campaign {code_number} doesn't exist"
+            else:
+                campaign_to_delete.delete()
+                return f"Campaign \"{campaign_to_delete.campaign_name}\" has been deleted"
+        else:
+            return "You don't have permission to delete this campaign"
+
+    def permission_to_delete_user(self, user_to_delete: "MyUser") -> bool:
+        return (self.role == ROLES[0][0] and user_to_delete.role != ROLES[0][0]) or \
+               (self.role == ROLES[1][0] and user_to_delete == self)
+
+    def permission_to_delete_campaign(self, code_of_campaign: int) -> bool:
+        try:
+            campaign_to_delete = Campaign.objects.get(campaign_code=code_of_campaign)
+        except Campaign.DoesNotExist:
+            return False
+        else:
+            return self.role == ROLES[0][0] or campaign_to_delete.campaign_owner == self
+
 
 class Campaign(models.Model):
     campaign_code = models.PositiveBigIntegerField(primary_key=True, db_column="campaign_code")
@@ -47,6 +97,20 @@ class Campaign(models.Model):
 
     def str(self):
         return self.campaign_name
+
+    def delete_campaign_pic(self, deleter: MyUser):
+        if deleter.permission_to_delete_campaign(self.campaign_code):
+            CampaignPictures.objects.get(campaign_code=self).campaign_pic.delete()
+            return f"The picture for the campaign \"{self.campaign_name}\" has been deleted"
+        else:
+            return "You don't have permission to delete this campaign picture"
+
+    def delete_bg_pic(self, deleter: MyUser):
+        if deleter.permission_to_delete_campaign(self.campaign_code):
+            CampaignPictures.objects.get(campaign_code=self).bg_pic.delete()
+            return f"The background for the campaign \"{self.campaign_name}\" has been deleted"
+        else:
+            return "You don't have the permission to delete this campaign's background"
 
 
 class UserPictures(models.Model):

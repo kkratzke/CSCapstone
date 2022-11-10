@@ -1,10 +1,9 @@
 import mysql.connector
-
-import App
 from App.models import *
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME, DATABASES
 import hashlib
 import boto3
+
 
 def login(uname, password):
     noSuchUser = False
@@ -123,46 +122,22 @@ def db_connection():
                                    password=db_settings['PASSWORD'])
 
 
-def delete_user(id_number):
-    try:
-        user_to_delete = MyUser.objects.get(id=id_number)
-    except MyUser.DoesNotExist:
-        return f"User ID # {id_number} does not exist"
-    else:
-        user_to_delete.delete()
-        return f"User account for {user_to_delete.username} has been deleted"
-
-
-def delete_campaign(code_number):
-    try:
-        campaign_to_delete = Campaign.objects.get(campaign_code=code_number)
-    except Campaign.DoesNotExist:
-        return f"Campaign {code_number} doesn't exist"
-    else:
-        campaign_to_delete.delete()
-        return f"Campaign \"{campaign_to_delete.campaign_name}\" has been deleted"
-
-
-def delete_campaign_pic(code_number):
-    CampaignPictures.objects.get(campaign_code__campaign_code=code_number).campaign_pic.delete()
-
-
-def delete_bg_pic(code_number):
-    CampaignPictures.objects.get(campaign_code__campaign_code=code_number).bg_pic.delete()
-
-
-def delete_user_pic(id_number):
-    UserPictures.objects.get(id_id=id_number).user_pic.delete()
-
-
-def delete_profile_banner(id_number):
-    UserPictures.objects.get(id_id=id_number).profile_banner.delete()
-
-
-def view_from_database(table_model: App.models, **kwargs):
+def view_from_database(table_model: "App.models", **kwargs):
     if len(kwargs) == 0:
         return table_model.objects.all()
     else:
         return table_model.objects.filter(**kwargs)
 
 
+def add_test_user(username: str, role: str, campaignCode: int):
+    user_to_return = MyUser(username=username, first_name="John", last_name="Doe",
+                            email="jdoe" + str(campaignCode) + "@unknown.com", password="jsbak39", role=role)
+    user_to_return.save()
+    campaign_to_return = Campaign(campaign_code=campaignCode, campaign_name="Test Campaign " + str(campaignCode),
+                                  campaign_owner=user_to_return)
+    campaign_to_return.save()
+    UserPictures(id=user_to_return, user_pic='App/static/images/profile-user.png',
+                 profile_banner='App/static/images/community-1.jpg').save()
+    CampaignPictures(campaign_code=campaign_to_return, campaign_pic="App/static/images/media/campaign_pic/10008.png",
+                     bg_pic='App/static/images/community-1.jpg').save()
+    return {"user": user_to_return, "campaign": campaign_to_return}
