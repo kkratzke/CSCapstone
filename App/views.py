@@ -129,6 +129,13 @@ class Homescreen(View):
             index = Campaign.objects.all()[:3]
             return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login']})
 
+        if request.method == 'POST' and 'edit_campaign_page' in request.POST:
+            cd = request.POST['campaign_to_view']
+            campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
+
+            return render(request, "EditCampaign.html",
+                          {"campaign": campaign, 'login': request.session['login']})
+
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
             #campaign = Campaign.objects.get(id__iexact=campaignId)

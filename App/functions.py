@@ -79,7 +79,8 @@ def edit_profile(email, first, last, pass1, pass2, owner):
         user.email = emailIn
         user.first_name = firstIn
         user.last_name = lastIn
-        user.password = passIn
+        if(pass1 == pass2 and pass1 != ""):
+            user.password = passIn
         user.save()
 
     return message

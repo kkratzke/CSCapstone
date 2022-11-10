@@ -123,7 +123,10 @@
                         <button type="submit" name="delete_campaign" class="btn btn-danger btn-block">Delete Campaign</button>
                           <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
                         </form>
-                        <button>Edit Campaign</button>
+                        <form action="/" method="post"> {% csrf_token %}
+                            <button type="submit" name="edit_campaign_page">Edit Campaign</button>
+                            <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_to_view"></input>
+                        </form>
                       </div>
                     </div>
                 </div>
