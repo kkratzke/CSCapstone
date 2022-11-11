@@ -116,7 +116,7 @@
         <div class="container">
           <div class="card">
             <form action="/" method="post"> {% csrf_token %}
-                        <button type="submit" name="delete_campaign" class="btn btn-danger btn-block">Delete Campaign</button>
+                        <button class="btn" type="submit" name="delete_campaign"><i class="fa-regular fa-trash"></i></button>
                           <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
             </form>
             <div class="d-flex justify-content-end">
