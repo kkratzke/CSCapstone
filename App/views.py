@@ -51,17 +51,7 @@ class Homescreen(View):
         
         if request.method == 'POST' and 'my_campaigns' in request.POST:
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
-            length = len(lst)
-            lst1 = []
-            lst2 = []
-            for i in range(ceil(length/2) ):
-                lst1.append(lst[i])
-
-            for i in range(ceil(length/2) , length):
-                lst2.append(lst[i])
-            print(lst1)
-            print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2, "login": request.session['login']})
+            return render(request, "MyCampaigns.html", {"first_half": lst, "login": request.session['login']})
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -146,7 +136,7 @@ class Homescreen(View):
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
 
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"first_half": lst, 'login': request.session['login']})
 
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
