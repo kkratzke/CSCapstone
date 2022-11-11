@@ -118,10 +118,12 @@
             <form action="/" method="post"> {% csrf_token %}
                         <button class="btn" type="submit" name="delete_campaign"><i class="fa-regular fa-trash"></i></button>
                           <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
-            </form>
-            <div class="d-flex justify-content-end">
-              <button class="btn"><i class="fa-solid fa-pencil"></i></button>
+                <div class="d-flex justify-content-end">
+                        <button class="btn"><i class="fa-solid fa-pencil"></i></button>
+                          <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
             </div>
+            </form>
+
             <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="" class="img homepage-img">
             <div class="intro">
               <h2>{{ campaign.campaign_name}}</h2>
