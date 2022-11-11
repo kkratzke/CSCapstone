@@ -150,6 +150,7 @@
                 <td>
                     <form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
                         <button class="btn btn-primary btn-block mt-3" name="view_campaign">View Campaign</button>
+                        <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_code"></input>
                     </form>
                 </td>
             </tr>
