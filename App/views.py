@@ -4,12 +4,13 @@ from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
 from django.conf import settings
-from .uploads import getNewName
+from django.http import HttpResponse, Http404
 from django.contrib import messages
+import datetime
 import hashlib
 import os
 
-from .functions import create_account, login, edit_profile
+from .functions import create_account, login, edit_profile, getNewName
 
 
 class Homescreen(View):
@@ -118,6 +119,13 @@ class Homescreen(View):
             index = Campaign.objects.all()[:3]
             return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login']})
 
+        if request.method == 'POST' and 'edit_campaign_page' in request.POST:
+            cd = request.POST['campaign_to_view']
+            campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
+
+            return render(request, "EditCampaign.html",
+                          {"campaign": campaign, 'login': request.session['login']})
+
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
             #campaign = Campaign.objects.get(id__iexact=campaignId)
@@ -153,6 +161,18 @@ class Homescreen(View):
             owner = MyUser.objects.get(username__iexact=request.session['login'])
             message = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'],
                                    request.POST['password'], request.POST['password2'], request.session['login'])
+            ProfileImage = request.FILES.get('ProfileImage')
+            file = ProfileImage
+            new_name = getNewName('image', owner.username)
+            where = '%s/user_pic/%s' % (settings.MEDIA_ROOT, new_name)
+            if file is not None:
+              content = file.chunks()
+              with open(where, 'wb') as f:
+                for i in content:
+                    f.write(i)
+              newUserPictures = UserPictures(username=owner, user_pic=new_name)
+              newUserPictures.save()
+
             reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
@@ -187,6 +207,12 @@ class PageJump(View):
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html")
+#class ExplorePage(View):
+#    def get(self, request):
+#        return render(request, "Explore.html")
+class SearchPage(View):
+    def get(self, request):
+        return render(request, "Search.html", {'campaigns': [], "login": request.session['login']})
 
 class PicUpload(View):
     def get(self, request):
@@ -211,3 +237,14 @@ def upload_handle(request):
         for i in content:
             f.write(i)
     return HttpResponse('ok')
+
+
+def campaign_view(request, slug=None):
+    if slug is not None:
+        try:
+            campaign = Campaign.objects.filter(campaign_code__exact=slug).first()
+        except:
+            raise Http404
+    print(campaign)
+    return render(request, "ViewCampaign.html", {"campaign": campaign})
+

@@ -48,7 +48,7 @@ class Campaign(models.Model):
 
 
 class UserPictures(models.Model):
-    id = models.OneToOneField(MyUser, on_delete=models.CASCADE, primary_key=True, db_column="id")
+    username = models.OneToOneField(MyUser, on_delete=models.CASCADE, primary_key=True, db_column="username",default=None)
     user_pic = models.ImageField(upload_to="user_pic/", default=None)
     profile_banner = models.ImageField(upload_to="profile_banner/", default=None)
 
