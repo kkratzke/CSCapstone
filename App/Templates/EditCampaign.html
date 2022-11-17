@@ -41,7 +41,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
-    <title>Edit Profile</title>
+    <title>Edit Campaign</title>
 </head>
 <body>
     <div class="my-content">
@@ -66,9 +66,33 @@
                                 <label for="firstName">Campaign Description</label>
                                 <input type="text" value="{{ campaign.campaign_description }}" name="description" class="form-control" id="firstName" aria-describedby="firstname" placeholder="Enter First Name..." >
                             </div>
-                            <a href="/">
-                                <button class="btn mt-3" name="edit_profile_button">Home</button></a>
-                            <button class="btn mt-3" type="submit" name="edit_campaign_button">Save</button>
+                            <div class="form-group mt-4">
+                                <label>Campaign Status:</label>
+                                <select required class="form-select form-select-lg" aria-label="Default select example" name="status">
+                                    {% for i in statuses %}
+                                        {% if i == campaign.campaign_status %}
+                                            <option value="{{ i }}" selected>{{ i }}</option>
+                                        {% else %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                 </select>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label>Type of Campaign:</label>
+                                <select required class="form-select form-select-lg" aria-label="Default select example" name="type">
+                                    {% for i in types %}
+                                        {% if i == campaign.campaign_type %}
+                                            <option value="{{ i }}" selected>{{ i }}</option>
+                                        {% else %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                 </select>
+                            </div>
+                            <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_code"></input>
+                            <a href="/" class="btn mt-3">Home</a>
+                            <button class="btn mt-3" type="submit" name="edit_campaign">Save</button>
                         </div>
                     </div>
                    </form>

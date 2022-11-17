@@ -144,9 +144,32 @@ class Homescreen(View):
         if request.method == 'POST' and 'edit_campaign_page' in request.POST:
             cd = request.POST['campaign_to_view']
             campaign = Campaign.objects.get(campaign_code__exact=cd)
+            types = ['Medical', 'Memorial', 'Emergency', 'Education', 'Other']
+            statuses = ['On going', 'Suspended', 'Canceled', 'End']
 
             return render(request, "EditCampaign.html",
-                          {"campaign": campaign, 'login': request.session['login']})
+                          {"campaign": campaign, 'login': request.session['login'], 'types': types, 'statuses': statuses})
+
+        if request.method == 'POST' and 'edit_campaign' in request.POST:
+            cd = request.POST['campaign_code']
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+
+            nm = request.POST['name']
+            desc = request.POST['description']
+            status = request.POST['status']
+            camp_type = request.POST['type']
+
+            campaign.campaign_name = nm
+            campaign.campaign_description = desc
+            campaign.campaign_status = status
+            campaign.campaign_type = camp_type
+
+            campaign.save()
+
+            lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
+
+            return render(request, "MyCampaigns.html",
+                          {"campaign": campaign, 'first_half': lst, 'login': request.session['login']})
 
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
@@ -275,5 +298,5 @@ def campaign_view(request, slug=None):
     for i in campaign.subscribers.all():
         if i == this_user:
             found = True
-    return render(request, "ViewCampaign.html", {"campaign": campaign, "is_subscribed":found})
+    return render(request, "ViewCampaign.html", {'num_subs': campaign.subscribers.count, "campaign": campaign, "is_subscribed":found, "login": request.session['login']})
 

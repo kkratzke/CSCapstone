@@ -12,7 +12,11 @@
     <title>{{ campaign.campaign_name }}</title>
 </head>
 <body>
-    {{ campaign.campaign_description}}
+    <b>Description:
+    {{ campaign.campaign_description}}</b>
+    <br>
+
+    <b>Subscriber Count: {{ num_subs }}</b>
     {% if not is_subscribed %}
         <form action="/" method="post"> {% csrf_token %}
                         <button class="btn btn-success btn-block" type="submit" name="subscribe">Subscribe</button>
