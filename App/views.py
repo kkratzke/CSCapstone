@@ -17,7 +17,7 @@ class Homescreen(View):
 
     def get(self, request):
         index = Campaign.objects.all()[:3]
-        return render(request, "Homescreen.html", {"campaign_index": index, 'login': request.session['login']})
+        return render(request, "Homescreen.html", {"campaign_index": index, 'login': request.session.get("login", None), "role": request.session.get("role", None)})
 
     def post(self, request):
         if request.method == 'POST' and 'login_page' in request.POST:
@@ -123,9 +123,27 @@ class Homescreen(View):
             path = '/ViewCampaign/' + str(request.POST['campaign_code'])
             return redirect(path, request)
 
+        if request.method == 'POST' and "subscribe" in request.POST:
+            this_user = MyUser.objects.get(username__iexact=request.session['login'])
+            cd = request.POST['campaign_code']
+            path = '/ViewCampaign/' + str(cd)
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+            campaign.subscribers.add(this_user)
+            campaign.save()
+            return redirect(path, request)
+
+        if request.method == 'POST' and "unsubscribe" in request.POST:
+            this_user = MyUser.objects.get(username__iexact=request.session['login'])
+            cd = request.POST['campaign_code']
+            path = '/ViewCampaign/' + str(cd)
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+            campaign.subscribers.remove(this_user)
+            campaign.save()
+            return redirect(path, request)
+
         if request.method == 'POST' and 'edit_campaign_page' in request.POST:
             cd = request.POST['campaign_to_view']
-            campaign = Campaign.objects.filter(campaign_code__exact=cd).first()
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
 
             return render(request, "EditCampaign.html",
                           {"campaign": campaign, 'login': request.session['login']})
@@ -250,5 +268,12 @@ def campaign_view(request, slug=None):
         except:
             raise Http404
     print(campaign)
-    return render(request, "ViewCampaign.html", {"campaign": campaign})
+
+    this_user = MyUser.objects.get(username__iexact=request.session['login'])
+
+    found = False
+    for i in campaign.subscribers.all():
+        if i == this_user:
+            found = True
+    return render(request, "ViewCampaign.html", {"campaign": campaign, "is_subscribed":found})
 

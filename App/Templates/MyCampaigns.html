@@ -128,15 +128,15 @@
                         <button class="btn card_btn" type="submit" name="delete_campaign"><i class="fa-regular fa-trash fa-lg mt-2"></i></button>
                           <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
                 <div class="d-flex justify-content-end">
-                        <button class="btn pencil_btn card_btn"><i class="fa-sharp fa-solid fa-pencil fa-lg mt-1"></i></button>
-                          <input input type="hidden" value={{ campaign.campaign_code }} name="removal"></input>
+                        <button class="btn pencil_btn card_btn" type="submit" name="edit_campaign_page"><i class="fa-sharp fa-solid fa-pencil fa-lg mt-1"></i></button>
+                          <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_to_view"></input>
             </div>
             </form>
 
             <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="">
             <div class="intro">
               <h2>{{ campaign.campaign_name}}</h2>
-              <p class="icon">0 <i class="fa-solid fa-eye"></i></p>
+              <p class="icon">{{ campaign.subscribers.count }} <i class="fa-solid fa-eye"></i></p>
               <p class="icon">0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
               <p class="description">Description: {{ campaign.campaign_description }}</p>
             </div>

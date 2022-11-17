@@ -43,12 +43,14 @@ class Campaign(models.Model):
                                        db_column="campaign_owner",default=None)
     campaign_description = models.CharField(max_length=500, blank=True)
 
+    subscribers = models.ManyToManyField(MyUser, related_name="subscribers")
+
     def str(self):
         return self.campaignName
 
 
 class UserPictures(models.Model):
-    username = models.OneToOneField(MyUser, on_delete=models.CASCADE, primary_key=True, db_column="username",default=None)
+    username = models.OneToOneField(to=MyUser, to_field='username', on_delete=models.CASCADE, primary_key=True, db_column="username", default=None)
     user_pic = models.ImageField(upload_to="user_pic/", default=None)
     profile_banner = models.ImageField(upload_to="profile_banner/", default=None)
 
