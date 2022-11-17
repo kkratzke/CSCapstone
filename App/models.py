@@ -94,6 +94,7 @@ class Campaign(models.Model):
     campaign_owner = models.ForeignKey(to=MyUser, to_field='username', on_delete=models.CASCADE,
                                        db_column="campaign_owner")
     campaign_description = models.CharField(max_length=500, blank=True)
+    subscribers = models.ManyToManyField(MyUser, related_name="subscribers")
 
     def str(self):
         return self.campaign_name
@@ -114,7 +115,8 @@ class Campaign(models.Model):
 
 
 class UserPictures(models.Model):
-    id = models.OneToOneField(MyUser, on_delete=models.CASCADE, primary_key=True, db_column="id")
+    username = models.OneToOneField(to=MyUser, to_field='username', on_delete=models.CASCADE, primary_key=True,
+                                    db_column="username", default=None)
     user_pic = models.ImageField(upload_to="user_pic/", default=None, validators=[validate_image_file_extension])
     profile_banner = models.ImageField(upload_to="profile_banner/", default=None,
                                        validators=[validate_image_file_extension])

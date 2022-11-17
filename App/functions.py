@@ -3,6 +3,7 @@ from App.models import *
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME, DATABASES
 import hashlib
 import boto3
+from django.apps import apps
 
 
 def login(uname, password):
@@ -141,3 +142,13 @@ def add_test_user(username: str, role: str, campaignCode: int):
     CampaignPictures(campaign_code=campaign_to_return, campaign_pic="App/static/images/media/campaign_pic/10008.png",
                      bg_pic='App/static/images/community-1.jpg').save()
     return {"user": user_to_return, "campaign": campaign_to_return}
+
+
+def from_str_to_table_model(a_string: str) -> "App.models" or None:
+    try:
+        model_type_to_return = apps.get_app_config("App").get_model(a_string)
+    except LookupError:
+        return None
+    else:
+        return model_type_to_return
+
