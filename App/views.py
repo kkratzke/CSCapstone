@@ -17,7 +17,7 @@ class Homescreen(View):
 
     def get(self, request):
         index = Campaign.objects.all()[:3]
-        return render(request, "Homescreen.html", {"campaign_index": index, 'login': request.session['login']})
+        return render(request, "Homescreen.html", {"campaign_index": index, 'login': request.session.get("login", None), "role": request.session.get("role", None)})
 
     def post(self, request):
         if request.method == 'POST' and 'login_page' in request.POST:
@@ -211,6 +211,12 @@ class PageJump(View):
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html")
+class AccountPage(View):
+    def get(self, request):
+        return render(request, "Profile.html")
+class PaymentPage(View):
+    def get(self, request):
+        return render(request, "Payment.html")
 #class ExplorePage(View):
 #    def get(self, request):
 #        return render(request, "Explore.html")
