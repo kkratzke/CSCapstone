@@ -1,0 +1,208 @@
+{% load static %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/bootstrap.css' %}"
+    type="text/css"
+>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="bootstrap/js/bootstrap.min.js" rel="stylesheet" media="screen">
+    <link href="bootstrap/js/bootstrap-modal.js" rel="stylesheet" media="screen">
+    <link href="bootstrap/js/bootstrap-transition.js" rel="stylesheet" media="screen">
+    <title>Edit Profile</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand d-flex flex-column align-item-start shadow" id="sidebar">
+        <a href="#" class="navbar-brand mt-5">
+            <h3><b>My Account</b></h3>
+            <hr>
+        </a>
+        <ul class="nav nav-tabs d-flex flex-column mt-5 w-100 align-item-start">
+            <li class="nav-item w-100">
+                <a href="#" class="nav-link pl-4">Account</a>
+            </li>
+            <li class="nav-item w-100">
+                <a href="#" class="nav-link pl-4">Statistics</a>
+            </li>
+            <li class="nav-item w-100">
+                <a href="#" class="nav-link pl-4">Campaigns</a>
+            </li>
+            <li class="nav-item w-100">
+                <a href="#" class="nav-link pl-4">Subscriptions</a>
+            </li>
+            <li class="nav-item w-100">
+                <a href="#" class="nav-link active pl-4">Payment</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="my-content">
+        <div class="row mt-2">
+            <h1>Payment Method</h1>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="row align-items-center mt-5">
+                    <p><b>Current Information</b></p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2 card">
+                            <div class="row card-number-row">
+                                <p class="card-number">0000 0000 0000 0000</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="cardholder-name">Cardholder Name</p>
+                                    <p class="card-name">Johnny Appleseed</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="expires">Expires</p>
+                                    <p class="exp-date">02/24</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <p><b>Card Number:</b>0000 0000 0000 0000</p>
+                            <p><b>Cardholder Name:</b> Johnny Appleseed</p>
+                            <p><b>Exp Date: </b> 02/24</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn mt-4" data-bs-toggle="modal" data-bs-target="#payment-modal">
+                        Add Payment
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="payment-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Payment</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <form action="/" method="post" class="form-container" enctype="multipart/form-data">{% csrf_token %}
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label for="card-num">Card Number:</label>
+                                                <input class="form-control" type="text" placeholder="0000 0000 0000 0000" name="card-num" maxlength="16" required>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label for="exp-date">Expiration Date</label>
+                                                    <input class="form-control" type="text" placeholder="MM/YY" name="exp-date" maxlength="5" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label for="cvv">CVC/CVV</label>
+                                                    <input class="form-control" type="text" placeholder="***" name="cvv" maxlength="3" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group mt-2">
+                                                <label for="cardholder-name">Cardholder Name</label>
+                                                <input type="text" class="form-control" placeholder="Name on card..." name="cardholder-name" required>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn">Save changes</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
+<style>
+    .navbar{
+        width: 250px;
+        height: 100%;
+        position:fixed;
+        border-radius: 10px;
+        background-color: #FFB400;
+    }
+    .nav-link{
+        font-size: 20px;
+        color: white;
+    }
+    h1{
+        font-family: "Montserrat", sans-serif;
+        font-weight: 300;
+    }
+
+    .nav-link:active,
+    .nav-link:focus,
+    .nav-link:hover{
+        background-color: #ffde8e;
+        color: black;
+        border-radius: 10px;
+    }
+    .my-content{
+        margin-left: 300px;
+    }
+    .btn{
+        background-color: #FFB400;
+        color:white;
+        width: 200px;
+    }
+    .btn-secondary{
+        background-color: darkgray;
+        color: black;
+        width:200px;
+    }
+    .btn-secondary:active,
+    .btn-secondary:focus,
+    .btn-secondary:hover{
+        background-color: white!important;
+        color: black!important;
+        border-radius: 6px!important;
+        border-color: black!important;
+    }
+    .btn:active,
+    .btn:focus,
+    .btn:hover{
+        background-color: #ffde8e!important;
+        color: black!important;
+    }
+    .card{
+        background-color: aquamarine;
+        border-radius: 10px;
+        height: 100px;
+        box-shadow:  10px 8px 2px 1px rgba(0, 0, 255, .1);
+    }
+    .card-number{
+        font-size: 10px;
+    }
+    .card-number-row{
+        margin-top: 35px;
+    }
+    .cardholder-name{
+        font-size:8px;
+        margin-bottom: 0px;
+    }
+    .card-name{
+        font-size:6px;
+    }
+    .expires{
+        font-size:8px;
+        margin-bottom: 0px;
+    }
+    .exp-date{
+        font-size: 8px;
+    }
+</style>

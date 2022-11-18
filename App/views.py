@@ -255,6 +255,12 @@ class ExplorePage(View):
 class SubscriptionPage(View):
     def get(self, request):
         return render(request, "Subscriptions.html")
+class AccountPage(View):
+    def get(self, request):
+        return render(request, "Profile.html")
+class PaymentPage(View):
+    def get(self, request):
+        return render(request, "Payment.html")
 #class ExplorePage(View):
 #    def get(self, request):
 #        return render(request, "Explore.html")
