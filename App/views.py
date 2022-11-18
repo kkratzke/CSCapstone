@@ -252,6 +252,12 @@ class PageJump(View):
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html")
+class AccountPage(View):
+    def get(self, request):
+        return render(request, "Profile.html")
+class PaymentPage(View):
+    def get(self, request):
+        return render(request, "Payment.html")
 #class ExplorePage(View):
 #    def get(self, request):
 #        return render(request, "Explore.html")
