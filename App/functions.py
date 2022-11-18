@@ -1,3 +1,5 @@
+from itertools import chain
+
 import mysql.connector
 from App.models import *
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME, DATABASES
@@ -152,3 +154,27 @@ def from_str_to_table_model(a_string: str) -> "App.models" or None:
     else:
         return model_type_to_return
 
+
+def create_fields_list(db_table: "App.models") -> list:
+    fields_list = []
+    table_meta = db_table._meta
+
+    for field in [f.name for f in table_meta.fields]:
+        choices_for_field = table_meta.get_field(field).choices
+        if choices_for_field is None:
+            fields_list.append((field, None))
+        else:
+            choices_for_field = [t[0] for t in choices_for_field]
+            fields_list.append((field, choices_for_field))
+
+    return fields_list
+
+
+def to_dict(instance):
+    opts = instance._meta
+    data = {}
+    for f in chain(opts.concrete_fields, opts.private_fields):
+        data[f.name] = f.value_from_object(instance)
+    for f in opts.many_to_many:
+        data[f.name] = [i.id for i in f.value_from_object(instance)]
+    return data

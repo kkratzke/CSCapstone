@@ -49,11 +49,11 @@
                         View Database
                     </a>
                   </li>
-                  {% comment %}<li class="nav-item">
+                  <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/edit_database">
                         Edit Database
                     </a>
-                  </li>{% endcomment %}
+                  </li>
               {% endif %}
             </ul>
               {% if login is None %}
@@ -119,64 +119,49 @@
           </div>
         </div>
     </nav>
-    {% if role != "Admin" %}
-        <p>You don't have permission to view the database. If you're an admin, please login to view this page.</p>
-    {% else %}
-        <h1>{{ table_model }} Table Management</h1>
+    <h1>{{ table_model }} Record Editor</h1>
+    <form action="" method="post"> {% csrf_token %}
+        <label for="selected-table">Pick a Table to Edit:</label>
+        <select name="selected-table" id="selected-table">
+            {% for model in tables %}
+                <option value="{{ model }}" {% if model == table_model %}selected{% endif %}>{{ model }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Select Table">
+    </form>
+    {% if table_selected == True %}
         <form action="" method="post"> {% csrf_token %}
-            <label for="selected-table">Pick a Table to View:</label>
-            <select name="selected-table" id="selected-table">
-                {% for model in tables %}
-                    <option value="{{ model }}" {% if model == table_model %}selected{% endif %}>{{ model }}</option>
+            <label for="selected-record">Pick a Record to Edit:</label>
+            <select name="selected-record" id="selected-record">
+                {% for pk in record_keys %}
+                    <option value="{{ pk }}" {% if pk == selected_record %}selected{% endif %}>{{ pk }}</option>
                 {% endfor %}
             </select>
-            <input type="submit" value="View Table">
+            <input type="submit" value="Load Data">
         </form>
-        {% if table_selected == True %}
-            <form action="" method="post" name="filter-table" id="filter-table"> {% csrf_token %}
-                {% for field_name, choices in fields_list %}
-                    <label for="{{ field_name }}">{{ field_name }}</label>
-                    {% if choices is not None %}
-                        <select name={{ field_name }} id={{ field_name }}>
-                            <option value="">No Filter</option>
-                            {% for choice in choices %}
-                                <option value={{ choice }}>{{ choice }}</option>
-                            {% endfor %}
-                        </select>
-                    {% elif field_name == "password" %}
-                        <input type="password" id={{ field_name }} name={{ field_name }} />
-                    {% else %}
-                        <input type="text" id={{ field_name }} name={{ field_name }} />
-                    {% endif %}
-                    <br>
-                {% endfor %}
-                <input type="submit" value="Filter Table">
-            </form>
-            {% if table_selected == True and search_made == True %}
-                 {% if no_results == False %}
-                     <table>
-                        <thead>
-                            <tr>
-                                {% for col in table_columns %}
-                                    <th>{{ col }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for record in table_data %}
-                                <tr>
-                                    {% for dataEntry in record %}
-                                        <td>{{ dataEntry }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                 {% else %}
-                     <p>Sorry, there aren't any matches to your query! :(</p>
-                 {% endif %}
-            {% endif %}
-        {% endif %}
+    {% endif %}
+    {% if table_selected == True and record_selected == True %}
+         <form action="" method="post" name="edit-record" id="edit-record"> {% csrf_token %}
+            {% for field_name, choices in fields_list %}
+                <label for="{{ field_name }}">{{ field_name }}</label>
+                {% if field_name in record_keys %}
+                    <p></p>
+                {% elif choices is not None %}
+                    <select name={{ field_name }} id={{ field_name }}>
+                        <option value="">No Filter</option>
+                        {% for choice in choices %}
+                            <option value={{ choice }}>{{ choice }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif field_name == "password" %}
+                    <input type="password" id={{ field_name }} name={{ field_name }} />
+                {% else %}
+                    <input type="text" id={{ field_name }} name={{ field_name }} />
+                {% endif %}
+                <br>
+            {% endfor %}
+            <input type="submit" value="Save Changes" name="save-changes">
+        </form>
     {% endif %}
 </body>
 </html>

@@ -48,12 +48,17 @@
                     <button type="button submit" name="search_page">Campaign Search</button>
                   </div>
               </form>
-              {% if role == "Admin"%}
+              {% if role == "Admin" %}
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/view_database">
                         View Database
                     </a>
                   </li>
+                  {% comment %}<li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/edit_database">
+                        Edit Database
+                    </a>
+                  </li>{% endcomment %}
               {% endif %}
             </ul>
               {% if login is None %}
