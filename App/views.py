@@ -7,11 +7,14 @@ from django.views import View
 from App.models import *
 from django.conf import settings
 from .uploads import getNewName
+from django.http import HttpResponse, Http404
+from django.contrib import messages
+import datetime
 import hashlib
 import os
 from django.apps import apps
 
-from .functions import create_account, login, edit_profile
+from .functions import create_account, login, edit_profile, getNewName
 
 
 class Homescreen(View):
@@ -63,18 +66,8 @@ class Homescreen(View):
 
         if request.method == 'POST' and 'my_campaigns' in request.POST:
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
-            length = len(lst)
-            lst1 = []
-            lst2 = []
-            for i in range(ceil(length / 2)):
-                lst1.append(lst[i])
 
-            for i in range(ceil(length / 2), length):
-                lst2.append(lst[i])
-            print(lst1)
-            print(lst2)
-            return render(request, "MyCampaigns.html",
-                          {"first_half": lst1, 'second_half': lst2, "login": request.session['login']})
+            return render(request, "MyCampaigns.html", {"first_half": lst, "login": request.session['login']})
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -141,6 +134,58 @@ class Homescreen(View):
             index = Campaign.objects.all()[:3]
             return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login']})
 
+        if request.method == 'POST' and "view_campaign" in request.POST:
+            path = '/ViewCampaign/' + str(request.POST['campaign_code'])
+            return redirect(path, request)
+
+        if request.method == 'POST' and "subscribe" in request.POST:
+            this_user = MyUser.objects.get(username__iexact=request.session['login'])
+            cd = request.POST['campaign_code']
+            path = '/ViewCampaign/' + str(cd)
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+            campaign.subscribers.add(this_user)
+            campaign.save()
+            return redirect(path, request)
+
+        if request.method == 'POST' and "unsubscribe" in request.POST:
+            this_user = MyUser.objects.get(username__iexact=request.session['login'])
+            cd = request.POST['campaign_code']
+            path = '/ViewCampaign/' + str(cd)
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+            campaign.subscribers.remove(this_user)
+            campaign.save()
+            return redirect(path, request)
+
+        if request.method == 'POST' and 'edit_campaign_page' in request.POST:
+            cd = request.POST['campaign_to_view']
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+            types = ['Medical', 'Memorial', 'Emergency', 'Education', 'Other']
+            statuses = ['On going', 'Suspended', 'Canceled', 'End']
+
+            return render(request, "EditCampaign.html",
+                          {"campaign": campaign, 'login': request.session['login'], 'types': types, 'statuses': statuses})
+
+        if request.method == 'POST' and 'edit_campaign' in request.POST:
+            cd = request.POST['campaign_code']
+            campaign = Campaign.objects.get(campaign_code__exact=cd)
+
+            nm = request.POST['name']
+            desc = request.POST['description']
+            status = request.POST['status']
+            camp_type = request.POST['type']
+
+            campaign.campaign_name = nm
+            campaign.campaign_description = desc
+            campaign.campaign_status = status
+            campaign.campaign_type = camp_type
+
+            campaign.save()
+
+            lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
+
+            return render(request, "MyCampaigns.html",
+                          {"campaign": campaign, 'first_half': lst, 'login': request.session['login']})
+
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
             # campaign = Campaign.objects.get(id__iexact=campaignId)
@@ -158,17 +203,9 @@ class Homescreen(View):
             campaign.delete()
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
-            length = len(lst)
-            lst1 = []
-            lst2 = []
-            for i in range(floor(length / 2) + 1):
-                lst1.append(lst[i])
 
-            for i in range(floor(length / 2) + 1, length):
-                lst2.append(lst[i])
-            print(lst1)
-            print(lst2)
-            return render(request, "MyCampaigns.html", {"first_half": lst1, 'second_half': lst2})
+            return render(request, "MyCampaigns.html", {"first_half": lst, 'login': request.session['login']})
+
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
@@ -184,6 +221,18 @@ class Homescreen(View):
             owner = MyUser.objects.get(username__iexact=request.session['login'])
             message = edit_profile(request.POST['email'], request.POST['first_name'], request.POST['last_name'],
                                    request.POST['password'], request.POST['password2'], request.session['login'])
+            ProfileImage = request.FILES.get('ProfileImage')
+            file = ProfileImage
+            new_name = getNewName('image', owner.username)
+            where = '%s/user_pic/%s' % (settings.MEDIA_ROOT, new_name)
+            if file is not None:
+              content = file.chunks()
+              with open(where, 'wb') as f:
+                for i in content:
+                    f.write(i)
+              newUserPictures = UserPictures(username=owner, user_pic=new_name)
+              newUserPictures.save()
+
             reload_content = [owner.email, owner.first_name, owner.last_name, "", ""]
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
@@ -438,3 +487,77 @@ class EditDatabase(View):
                                                          "table_selected": request.session.get("selected_table", None) is not None,
                                                          "table_model": request.session["selected_table"],
                                                          "ask_for_confirmation": self.ConfirmationStatus.NO_MESSAGE})
+
+
+class ExplorePage(View):
+    def get(self, request):
+        return render(request, "Explore.html")
+        
+        
+class SubscriptionPage(View):
+    def get(self, request):
+        return render(request, "Subscriptions.html")
+        
+        
+class AccountPage(View):
+    def get(self, request):
+        return render(request, "Profile.html")
+        
+        
+class PaymentPage(View):
+    def get(self, request):
+        return render(request, "Payment.html")
+        
+        
+# class ExplorePage(View):
+#    def get(self, request):
+#        return render(request, "Explore.html")
+
+
+class SearchPage(View):
+    def get(self, request):
+        return render(request, "Search.html", {'campaigns': [], "login": request.session['login']})
+
+
+class PicUpload(View):
+    def get(self, request):
+        return render(request, "PicUpload.html", {})
+
+    def post(selfself, request):
+        if request.method == 'POST':
+            img = Img(img_url=request.FILES.get('img'))
+            img.save()
+        return render(request, 'PicUpload.html')
+
+
+def upload_handle(request):
+    file = request.FILES['image']
+
+    new_name = getNewName('img_url')
+
+    where = '%s/users/%s' % (settings.MEDIA_ROOT, new_name)
+
+    content = file.chunks()
+    with open(where, 'wb') as f:
+        for i in content:
+            f.write(i)
+    return HttpResponse('ok')
+
+
+def campaign_view(request, slug=None):
+    if slug is not None:
+        try:
+            campaign = Campaign.objects.filter(campaign_code__exact=slug).first()
+        except:
+            raise Http404
+    print(campaign)
+
+    this_user = MyUser.objects.get(username__iexact=request.session['login'])
+
+    found = False
+    for i in campaign.subscribers.all():
+        if i == this_user:
+            found = True
+    return render(request, "ViewCampaign.html", {'num_subs': campaign.subscribers.count, "campaign": campaign, "is_subscribed":found, "login": request.session['login']})
+
+

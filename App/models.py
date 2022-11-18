@@ -96,6 +96,8 @@ class Campaign(models.Model):
     campaign_description = models.CharField(max_length=500, blank=True)
     subscribers = models.ManyToManyField(MyUser, related_name="subscribers")
 
+    subscribers = models.ManyToManyField(MyUser, related_name="subscribers")
+
     def str(self):
         return self.campaign_name
 

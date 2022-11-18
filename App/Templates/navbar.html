@@ -4,15 +4,20 @@
     href="{% static 'css/bootstrap.css' %}"
     type="text/css"
 >
-
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Campaign Search</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Dashboard</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg rounded shadow mt-2">
+    <nav class="navbar navbar-expand-lg rounded shadow mt-2">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Navbar</a>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -23,9 +28,11 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Explore
-                </a>
+                <form action="/" method="post"> {% csrf_token %}
+                  <a class="nav-link" href="explore/" name="explore">
+                      Explore
+                  </a>
+                </form>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">
@@ -37,18 +44,16 @@
                     Help
                 </a>
               </li>
-                {% if role == "Admin"%}
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/view_database">
-                        View Database
-                    </a>
-                  </li>
-                  {% comment %}<li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/edit_database">
-                        Edit Database
-                    </a>
-                  </li>{% endcomment %}
-               {% endif %}
+                <li class="nav-item">
+                <a class="nav-link" href="search/" name="search">
+                  Search
+                </a>
+              </li>
+              <form action="/" method="post"> {% csrf_token %}
+                  <div class="pt-2">
+                    <button type="button submit" name="search_page">Campaign Search</button>
+                  </div>
+              </form>
             </ul>
               {% if login is None %}
                 <a class="nav-link" href="#">
@@ -63,7 +68,7 @@
               {% if login is not None %}
               <div class="row align-items-center">
                 <div class="col-3">
-                 <img src="../static/images/profile-user.png" alt="" class="user-profile">
+                 <img src="./static/images/profile-user.png" alt="" class="user-profile">
                 </div>
                 <div class="col-6">
                   <div class="dropdown">
@@ -114,81 +119,57 @@
               {% endif %}
           </div>
         </div>
-
     </nav>
-<form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
-    <h3>Search For Campaign</h3>
-    <hr>
-    <div class="form-group mt-4">
-      <div class="row align-items-center">
-        <label>Search Method</label>
-        <select required class="form-select form-select-lg" aria-label="Default select example" name="search_type">
-            <option selected value="by_code">Campaign Code</option>
-            <option value="by_desc">Campaign Description</option>
-            <option value="by_title">Campaign Title</option>
-         </select>
-         <div class="form-group">
-            <label for="usernameInput">Search Parameter:</label>
-            <input type="text" name="search_info" class="form-control" id="campaignInput" aria-describedby="campaignName" placeholder="Enter Information..." required>
-        </div>
-      </div>
-      <div class="col-6">
-          <button class="btn btn-primary btn-block mt-3" name="campaign_search">GO</button>
-      </div>
-    </div>
-</form>
-    <div>
-        Results:
-        <table border="1px solid black">
-            <tr>
-                <td>
-                    <b><u>Name</u></b>
-                </td>
-                <td>
-                    <b><u>Description</u></b>
-                </td>
-                <td>
-
-                </td>
-            </tr>
-            {% for campaign in campaigns %}
-            <tr>
-                <td>
-                    {{ campaign.campaign_name }}
-                </td>
-                <td>
-                    {{ campaign.campaign_description }}
-                </td>
-                <td>
-                    <form action="/" method="post" class="form-container " enctype="multipart/form-data">{% csrf_token %}
-                        <button class="btn btn-primary btn-block mt-3" name="view_campaign">View Campaign</button>
-                        <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_code"></input>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-
 </body>
 </html>
-
 <style>
-  .user-profile{
-  width: 35px;
-  }
   .navbar{
     width: 75%;
     margin-right: auto;
     margin-left: auto;
     background-color: #FFFFFF;
   }
-  table, th, td {
-    border: 1px solid black;
-    padding: 15px
+  .nav-link{
+    color: #302B27;
+  }
+  .mt-0 {
+  margin-top: 0 !important;
+}
+
+.mt-1 {
+  margin-top: 80px !important;
+}
+.ml-1 {
+  margin-left: 40px;
+}
+.homepage-img {
+  width: 100%;
+}
+.primary-btn {
+  background-color: #FFB400;
+}
+.primary-btn:hover {
+  background-color: #302B27;
+  color: #FFFFFF;
+}
+h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 300;
+}
+.btn{
+  border-radius: 0;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.btn-light{
+  background-color: #FFFFFF;
+}
+.user-profile{
+  width: 35px;
+}
+.txt-col{
+  background: rgb(255,121,0);
+  background: linear-gradient(90deg, rgba(255,121,0,1) 0%, rgba(255,180,0,1) 91%);
+  border-radius: 25px;
 }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-

@@ -88,7 +88,8 @@ def edit_profile(email, first, last, pass1, pass2, owner, userPic, userBanner):
         user.email = emailIn
         user.first_name = firstIn
         user.last_name = lastIn
-        user.password = passIn
+        if(pass1 == pass2 and pass1 != ""):
+            user.password = passIn
         user.save()
         user_media.user_pic = userPic
         user_media.user_pic.name = user_media.user_pic.name
@@ -115,7 +116,12 @@ def edit_profile(email, first, last, pass1, pass2, owner, userPic, userBanner):
 
     return message
 
+def getNewName(file_type, name):
+  new_name = str(name) + '.png'
 
+  return new_name
+  
+  
 def db_connection():
     db_settings = DATABASES['default']
     return mysql.connector.connect(host=db_settings['HOST'],
@@ -178,3 +184,4 @@ def to_dict(instance):
     for f in opts.many_to_many:
         data[f.name] = [i.id for i in f.value_from_object(instance)]
     return data
+

@@ -4,7 +4,35 @@
     href="{% static 'css/bootstrap.css' %}"
     type="text/css"
 >
+<script>
+        var res_licenseImg;
+        $("#file_licenseImg").fileinput({
+            language: 'zh',
+            uploadUrl: urlQJ+'/uploadfiles',
+            allowedFileExtensions : ['jpg', 'png'],
+            maxFileSize: 5000,
+            maxFilesNum: 1,
+            showCaption: false,
+            showUpload: false,
+            slugCallback: function(filename) {
+                return filename.replace('(', '_').replace(']', '_');
+            }
+        });
 
+        $('#file_licenseImg').on('fileuploaded', function(event, data, previewId, index){
+            res_licenseImg = data.response.imgurl;
+            // console.log(res_licenseImg);
+            if(res_licenseImg){
+                $('.imgReg').css('display', 'inline')
+                $('#file_licenseImg').css('display', 'none');
+                $('.btn-file').css('display', 'none');
+            }
+            $('.fileinput-remove').click(function(){
+                $('#file_licenseImg').css('display', 'inline-block');
+                $('.btn-file').css('display', 'inline-block');
+            })
+        })
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,9 +48,9 @@
             <h3><b>My Account</b></h3>
             <hr>
         </a>
-        <ul class="navbar-nav d-flex flex-column mt-5 w-100 align-item-start">
+        <ul class="nav nav-tabs d-flex flex-column mt-5 w-100 align-item-start">
             <li class="nav-item w-100">
-                <a href="#" class="nav-link pl-4">Account</a>
+                <a href="#" class="nav-link active pl-4">Account</a>
             </li>
             <li class="nav-item w-100">
                 <a href="#" class="nav-link pl-4">Statistics</a>
@@ -31,7 +59,10 @@
                 <a href="#" class="nav-link pl-4">Campaigns</a>
             </li>
             <li class="nav-item w-100">
-                <a href="#" class="nav-link pl-4">Subscriptions</a>
+                <a href="subscription/" class="nav-link pl-4">Subscriptions</a>
+            </li>
+            <li class="nav-item w-100">
+                <a href="payment/" class="nav-link pl-4">Payment</a>
             </li>
         </ul>
     </nav>
@@ -41,7 +72,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <form action="/" method="post" class="form-container ">{% csrf_token %}
+                <form action="/" method="post" class="form-container" enctype="multipart/form-data">{% csrf_token %}
                     <div class="row align-items-center mt-5">
                         <p><b>Personal Information</b></p>
                         <hr>
@@ -75,6 +106,13 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-8" style="position:relative">
+                               <!--<input id="file_licenseImg" type="file"  class="file" name="ProfileImage">
+                               <i class="fa fa-check regII imgReg" style="display:none"></i>-->
+                                <p>Upload your avatar</p><input type="file" name="ProfileImage">
+                            </div>
+
+                            <a href="/" class="btn mt-3">Home</a>
                             <button class="btn mt-3" type="submit" name="edit_profile_button">Save</button>
                         </div>
                     </div>
