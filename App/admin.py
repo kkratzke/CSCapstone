@@ -4,3 +4,6 @@ from App.models import *
 
 admin.site.register(MyUser)
 admin.site.register(Campaign)
+admin.site.register(UserPictures)
+admin.site.register(CampaignPictures)
+

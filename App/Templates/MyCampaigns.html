@@ -50,16 +50,44 @@
                   Search
                 </a>
               </li>
-        </ul>
-          {% if login is None %}
-            <a class="nav-link" href="#">
-            <form action="/" method="post"> {% csrf_token %}
-              <div class="pt-2">
-                <button type="button submit" class="btn primary-btn pr-1" name="login_page">Login</button>
-              </div>
-            </form>
-            </a>
-          {% endif %}
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                    Explore
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  Popular
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link">
+                    Help
+                </a>
+              </li>
+                {% if role == "Admin"%}
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/view_database">
+                        View Database
+                    </a>
+                  </li>
+                  {% comment %}<li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/edit_database">
+                        Edit Database
+                    </a>
+                  </li>{% endcomment %}
+                {% endif %}
+            </ul>
+              {% if login is None %}
+                <a class="nav-link" href="#">
+                <form action="/" method="post"> {% csrf_token %}
+                  <div class="pt-2">
+                    <button type="button submit" class="btn primary-btn pr-1" name="login_page">Login</button>
+                  </div>
+                </form>
+                </a>
+              {% endif %}
 
           {% if login is not None %}
           <div class="row align-items-center">
