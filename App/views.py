@@ -252,6 +252,9 @@ class PageJump(View):
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html")
+class SubscriptionPage(View):
+    def get(self, request):
+        return render(request, "Subscriptions.html")
 #class ExplorePage(View):
 #    def get(self, request):
 #        return render(request, "Explore.html")
