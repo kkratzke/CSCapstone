@@ -120,6 +120,20 @@
         </div>
     </nav>
     <h1>{{ table_model }} Record Editor</h1>
+    {% if ask_for_confirmation == 1 %}
+        <form action="" method="post"> {% csrf_token %}
+            <h5>Are you sure you want to make the following changes to {{ selected_record }}?</h5>
+            <ul>
+              {% for name, change in changes_list %}
+                  <li>Changed {{ name }} to {{ change }}</li>
+              {%  endfor %}
+            </ul>
+            <input type="submit" value="Confirm Changes" name="confirm-changes">
+            <input type="submit" value="Cancel" name="cancel-changes">
+        </form>
+    {% elif ask_for_confirmation == 2 %}
+        <h5>Changes successfully saved for {{ selected_record }}!</h5>
+    {% endif %}
     <form action="" method="post"> {% csrf_token %}
         <label for="selected-table">Pick a Table to Edit:</label>
         <select name="selected-table" id="selected-table">
@@ -133,30 +147,33 @@
         <form action="" method="post"> {% csrf_token %}
             <label for="selected-record">Pick a Record to Edit:</label>
             <select name="selected-record" id="selected-record">
-                {% for pk in record_keys %}
+                {% for pk in primary_key_values %}
                     <option value="{{ pk }}" {% if pk == selected_record %}selected{% endif %}>{{ pk }}</option>
                 {% endfor %}
             </select>
             <input type="submit" value="Load Data">
         </form>
     {% endif %}
-    {% if table_selected == True and record_selected == True %}
+    {% if table_selected == True and selected_record != "" %}
          <form action="" method="post" name="edit-record" id="edit-record"> {% csrf_token %}
-            {% for field_name, choices in fields_list %}
-                <label for="{{ field_name }}">{{ field_name }}</label>
-                {% if field_name in record_keys %}
-                    <p></p>
+            {% for field_name, choices, not_editable, field_value in fields_list %}
+                {% if field_name == "password" %}
+                    <label for="password">New Password: </label>
+                {% else %}
+                    <label for="{{ field_name }}">{{ field_name }}: </label>
+                {% endif %}
+                {% if not_editable == True %}
+                    <label>{{ field_value }}</label>
                 {% elif choices is not None %}
                     <select name={{ field_name }} id={{ field_name }}>
-                        <option value="">No Filter</option>
                         {% for choice in choices %}
-                            <option value={{ choice }}>{{ choice }}</option>
+                            <option value="{{ choice }}" {% if field_value == choice %}selected{% endif %}>{{ choice }}</option>
                         {% endfor %}
                     </select>
                 {% elif field_name == "password" %}
                     <input type="password" id={{ field_name }} name={{ field_name }} />
                 {% else %}
-                    <input type="text" id={{ field_name }} name={{ field_name }} />
+                    <input type="text" id={{ field_name }} name={{ field_name }} value="{{ field_value }}" />
                 {% endif %}
                 <br>
             {% endfor %}

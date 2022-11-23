@@ -1,6 +1,8 @@
 from itertools import chain
 
 import mysql.connector
+from django.core import serializers
+
 from App.models import *
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME, DATABASES
 import hashlib
@@ -161,27 +163,28 @@ def from_str_to_table_model(a_string: str) -> "App.models" or None:
         return model_type_to_return
 
 
-def create_fields_list(db_table: "App.models") -> list:
+def create_fields_list(instance) -> list:
     fields_list = []
-    table_meta = db_table._meta
+    table_meta = instance._meta
+    instance_dist = to_dict(instance)
 
     for field in [f.name for f in table_meta.fields]:
         choices_for_field = table_meta.get_field(field).choices
-        if choices_for_field is None:
-            fields_list.append((field, None))
-        else:
+        is_pk_or_fk = table_meta.pk.name == field or isinstance(table_meta.get_field(field), models.ForeignKey)
+
+        if choices_for_field is not None:
             choices_for_field = [t[0] for t in choices_for_field]
-            fields_list.append((field, choices_for_field))
+
+        fields_list.append((field, choices_for_field, is_pk_or_fk, instance_dist[field]))
 
     return fields_list
 
 
 def to_dict(instance):
     opts = instance._meta
-    data = {}
-    for f in chain(opts.concrete_fields, opts.private_fields):
-        data[f.name] = f.value_from_object(instance)
-    for f in opts.many_to_many:
-        data[f.name] = [i.id for i in f.value_from_object(instance)]
-    return data
+    serialized_data = serializers.serialize("python", [instance])[0]
+    instance_dict = {opts.pk.name: serialized_data['pk']}
+    instance_dict.update(serialized_data['fields'])
+    return instance_dict
+
 

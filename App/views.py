@@ -1,12 +1,16 @@
+import json
 from math import floor, ceil
 from enum import Enum
+
+from django.core import serializers
 from django.core.exceptions import PermissionDenied
-from App.functions import view_from_database, from_str_to_table_model, create_fields_list, to_dict
+from django.db.models import QuerySet
+
+from App.functions import view_from_database, from_str_to_table_model, create_fields_list, to_dict, getNewName
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
 from django.conf import settings
-from .uploads import getNewName
 from django.http import HttpResponse, Http404
 from django.contrib import messages
 import datetime
@@ -67,7 +71,8 @@ class Homescreen(View):
         if request.method == 'POST' and 'my_campaigns' in request.POST:
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
 
-            return render(request, "MyCampaigns.html", {"first_half": lst, "login": request.session['login']})
+            return render(request, "MyCampaigns.html", {"first_half": lst, "login": request.session['login'],
+                                                        "role": request.session['role']})
 
         if request.method == 'POST' and "create_campaign" in request.POST:
             logged_in = request.session['login']
@@ -102,10 +107,12 @@ class Homescreen(View):
                 newCampaign.save()
                 newCampaignPictures.save()
 
-                return render(request, "Homescreen.html", {"login": request.session['login']})
+                return render(request, "Homescreen.html", {"login": request.session['login'],
+                                                           "role": request.session['role']})
 
         if request.method == 'POST' and "search_page" in request.POST:
-            return render(request, "Search.html", {'campaigns': [], "login": request.session['login']})
+            return render(request, "Search.html", {'campaigns': [], "login": request.session['login'],
+                                                   "role": request.session['role']})
 
         if request.method == 'POST' and "campaign_search" in request.POST:
             search_type = request.POST['search_type']
@@ -128,11 +135,13 @@ class Homescreen(View):
                         if str(c.campaign_name).lower().__contains__(info):
                             newList.append(c)
 
-            return render(request, "Search.html", {'campaigns': newList, "login": request.session['login']})
+            return render(request, "Search.html", {'campaigns': newList, "login": request.session['login'],
+                                                   "role": request.session['role']})
 
         if request.method == 'POST' and "go_home" in request.POST:
             index = Campaign.objects.all()[:3]
-            return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login']})
+            return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login'],
+                                                       "role": request.session['role']})
 
         if request.method == 'POST' and "view_campaign" in request.POST:
             path = '/ViewCampaign/' + str(request.POST['campaign_code'])
@@ -184,7 +193,8 @@ class Homescreen(View):
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
 
             return render(request, "MyCampaigns.html",
-                          {"campaign": campaign, 'first_half': lst, 'login': request.session['login']})
+                          {"campaign": campaign, 'first_half': lst, 'login': request.session['login'],
+                           "role": request.session['role']})
 
         if request.method == 'POST' and "delete_campaign" in request.POST:
             cd = request.POST['removal']
@@ -204,8 +214,8 @@ class Homescreen(View):
 
             lst = Campaign.objects.filter(campaign_owner__username__iexact=request.session['login'])
 
-            return render(request, "MyCampaigns.html", {"first_half": lst, 'login': request.session['login']})
-
+            return render(request, "MyCampaigns.html", {"first_half": lst, 'login': request.session['login'],
+                                                        "role": request.session['role']})
 
         if request.method == 'POST' and 'edit_profile_page' in request.POST:
             logged_in = request.session['login']
@@ -237,7 +247,8 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return render(request, "Homescreen.html", {"login": request.session['login']})
+                return render(request, "Homescreen.html", {"login": request.session['login'],
+                                                           "role": request.session['role']})
 
 
 class Landing(View):
@@ -351,12 +362,6 @@ class ViewDatabase(View):
 
 
 class EditDatabase(View):
-    class ConfirmationStatus(Enum):
-        MESSAGE_NO_CHANGE = -1,
-        NO_MESSAGE = 0,
-        MESSAGE_CONFIRM = 1,
-        MESSAGE_UPDATE = 2
-
     def get(self, request):
         if request.session['login'] is None or request.session['role'] != "Admin":
             raise PermissionDenied
@@ -370,123 +375,110 @@ class EditDatabase(View):
         if request.session['login'] is None or request.session['role'] != "Admin":
             raise PermissionDenied
 
-        saved_table_selection = request.POST.get('selected-table', None)
-        table_model = from_str_to_table_model(request.session.get('selected_table', saved_table_selection))
-        record_key = table_model.pk
+        if "selected-table" in request.POST:
+            table_model = from_str_to_table_model(request.POST['selected-table'])
+        else:
+            table_model = from_str_to_table_model(request.session['selected_table'])
+
+        table_meta = table_model._meta
+        record_key = table_meta.pk
 
         if "confirm-changes" in request.POST:  # Changes should be saved to database
-            keyword_middle_part = "__" + record_key._meta.to_fields[0] if isinstance(table_model.pk,
-                                                                                       models.ForeignKey) else ""
-            data_record = table_model.objects.get({table_model.pk.name + keyword_middle_part + "__iexact":
-                                                       request.session['selected_record']})
+            keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
+            data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
+                                                   request.session['selected_record']})
 
-            for change in request.session['changes_list']:
-                data_record.setAttr(change[0], change[1])
+            for field_name, change in request.session['changes_list']:
+                if field_name == "password":
+                    change = hashlib.sha256(change.encode("utf-8")).hexdigest()
+                setattr(data_record, field_name, change)
 
             data_record.save()
-            request.session['data-record'] = to_dict(data_record).values()
+            request.session.pop('fields_list')
+            edited_record_key = request.session.pop('selected_record')
+
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
                                                          "tables": [model.__name__ for model
                                                                     in apps.get_app_config("App").get_models()],
-                                                         "record_keys": request.session['record_keys'],
-                                                         "selected_record": request.session['selected_record'],
-                                                         "data_record": data_record,
-                                                         "fields_list": request.session['fields_list'],
-                                                         "ask_for_confirmation": self.ConfirmationStatus.MESSAGE_UPDATE})
+                                                         "primary_key_values": request.session['primary_key_values'],
+                                                         "selected_record": edited_record_key,
+                                                         "fields_list": [],
+                                                         "ask_for_confirmation": 2})
         elif "save-changes" in request.POST:  # Changes are being asked to save to database
-            keyword_middle_part = "__" + record_key._meta.to_fields[0] if isinstance(table_model.pk,
-                                                                                       models.ForeignKey) else ""
-            data_record = table_model.objects.get({table_model.pk.name + keyword_middle_part + "__iexact":
-                                                       request.session['selected_record']})
+            keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
+            data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
+                                                  request.session['selected_record']})
 
-            warn_about_changes = self.ConfirmationStatus.MESSAGE_NO_CHANGE
+            warn_about_changes = 0
             changes_list = []
-            names_of_changes = []
             for fieldTuple in request.session['fields_list']:
-                is_pk_or_fk = fieldTuple[2]
-                field_name = fieldTuple[0]
+                field_name, _, is_pk_or_fk, value_from_database = fieldTuple
 
-                if is_pk_or_fk is False and data_record.getAttr(field_name) != request.POST[field_name]:
-                    if field_name == "password" and len(request.POST['password']) > 4:
-                        names_of_changes.append(field_name)
-                        data_record.setAttr("password", hashlib.sha256(request.POST['password'].encode('utf-8'))
-                                            .hexdigest())
-                        changes_list.append((field_name, data_record.password))
-                        warn_about_changes = self.ConfirmationStatus.MESSAGE_CONFIRM
-                    elif field_name != "password":
-                        names_of_changes.append(field_name)
-                        data_record.setAttr(field_name, request.POST[field_name])
-                        changes_list.append((field_name, data_record.getAttr(field_name)))
-                        warn_about_changes = self.ConfirmationStatus.MESSAGE_CONFIRM
+                if is_pk_or_fk is False and value_from_database != request.POST[field_name] and \
+                   (field_name != "password" or len(request.POST['password']) > 4):
+                    setattr(data_record, field_name, request.POST[field_name])
+                    changes_list.append((field_name, getattr(data_record, field_name)))
+                    warn_about_changes = 1
 
             request.session['changes_list'] = changes_list
+            print(changes_list)
+            print(warn_about_changes)
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
                                                          "tables": [model.__name__ for model
                                                                     in apps.get_app_config("App").get_models()],
-                                                         "record_keys": request.session['record_keys'],
-                                                         "data_record": to_dict(data_record).values(),
+                                                         "primary_key_values": request.session['primary_key_values'],
+                                                         "table_selected": True,
                                                          "selected_record": request.session['selected_record'],
+                                                         "table_model": request.session["selected_table"],
                                                          "fields_list": request.session['fields_list'],
-                                                         "names_of_changes": names_of_changes,
+                                                         "changes_list": request.session['changes_list'],
                                                          "ask_for_confirmation": warn_about_changes})
 
-        elif "selected-record" in request.POST:  # Record to be edited from table has been selected
-            request.session['selected_record'] = request.POST['selected-record']
-            table_meta = table_model._meta
-            keyword_middle_part = "__" + record_key._meta.to_fields[0] if isinstance(table_model.pk,
-                                                                                     models.ForeignKey) else ""
+        elif "selected-record" in request.POST or "cancel-changes" in request.POST:  # Record to be edited from table has been selected
+            if "selected-record" in request.POST:
+                request.session['selected_record'] = request.POST['selected-record']
+                keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
 
-            data_record = table_model.objects.get(**{table_meta.pk.name + keyword_middle_part + "__iexact":
-                                                     request.POST['selected-record']})
+                data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
+                                                         request.POST['selected-record']})
 
-            fields_list = []
-            for field in [f.name for f in table_meta.fields]:
-                choices_for_field = table_meta.get_field(field).choices
-                is_pk_or_fk = table_meta.pk.name == field or isinstance(table_meta.get_field(field), models.ForeignKey)
+                request.session['fields_list'] = create_fields_list(data_record)
 
-                if choices_for_field is None:
-                    fields_list.append((field, None, is_pk_or_fk))
-                else:
-                    choices_for_field = [t[0] for t in choices_for_field]
-                    fields_list.append((field, choices_for_field, is_pk_or_fk))
-
-            request.session['fields_list'] = fields_list
-            request.session['data-record'] = to_dict(data_record).values()
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
                                                          "tables": [model.__name__ for model
                                                                     in apps.get_app_config("App").get_models()],
-                                                         "record_keys": request.session['record_keys'],
-                                                         "data_record": request.session['data-record'],
+                                                         "primary_key_values": request.session['primary_key_values'],
                                                          "selected_record": request.session['selected_record'],
                                                          "table_selected": True,
                                                          "table_model": request.session["selected_table"],
-                                                         "fields_list": fields_list,
-                                                         "ask_for_confirmation": self.ConfirmationStatus.NO_MESSAGE})
+                                                         "fields_list": request.session['fields_list'],
+                                                         "ask_for_confirmation": 0})
         else:  # Table to edit has been selected
             request.session['selected_table'] = request.POST['selected-table']
 
-            record_keys = []
+            primary_key_values = []
             for record in view_from_database(table_model):
                 if isinstance(record_key, models.ForeignKey):
                     data_holder = getattr(record, record_key.name)
-                    fk_field = table_model._meta.get_field(record_key.name).to_fields[0]
+                    fk_field = table_meta.get_field(record_key.name).to_fields[0]
                     actual_value = getattr(data_holder, fk_field)
                 else:
                     actual_value = record.pk
-                record_keys.append(actual_value)
+                primary_key_values.append(actual_value)
 
-            request.session['record_keys'] = record_keys
+            request.session['primary_key_values'] = primary_key_values
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
                                                          "tables": [model.__name__ for model
                                                                     in apps.get_app_config("App").get_models()],
-                                                         "record_keys": record_keys,
+                                                         "primary_key_values": primary_key_values,
                                                          "table_selected": request.session.get("selected_table", None) is not None,
                                                          "table_model": request.session["selected_table"],
-                                                         "ask_for_confirmation": self.ConfirmationStatus.NO_MESSAGE})
+                                                         "selected_record": "",
+                                                         "ask_for_confirmation": 0})
 
 
 class ExplorePage(View):
