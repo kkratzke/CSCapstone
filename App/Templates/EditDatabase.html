@@ -189,7 +189,7 @@
                 {% elif field_name == "password" %}
                     <input type="password" id="{{ field_name }}" name="{{ field_name }}" />
                 {% elif field_name == "donation_total" %}
-                    <input type="text" inputmode="numeric" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" pattern="^\d+\.\d{2}$">
+                    <input type="text" inputmode="numeric" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" pattern="^(([1-9]\d{0,7})|(0))\.\d{2}$">
                 {% elif not_editable > 0 %}
                     <input type="text" id="{{ field_name }}" class="readonly-text" name="{{ field_name }}" value="{{ field_value }}" readonly/>
                 {% else %}

@@ -369,9 +369,6 @@ class EditDatabase(View):
         if request.session['login'] is None or request.session['role'] != "Admin":
             raise PermissionDenied
 
-        # if 'fields_list' in request.session:
-        #     print(request.session['fields_list'])
-
         if "selected-table" in request.POST:
             table_model = from_str_to_table_model(request.POST['selected-table'])
         else:
@@ -409,6 +406,7 @@ class EditDatabase(View):
                 confirm_signal = ConfirmationStatus.CONFIRM_REMOVE.name
             else:
                 for field_name, change in request.session['changes_list']:
+                    print(field_name, change)
                     if isinstance(table_meta.get_field(field_name), models.ImageField):
                         clear_field(admin_record, data_record, field_name)
                     else:
@@ -419,6 +417,7 @@ class EditDatabase(View):
 
             request.session.pop('fields_list')
             edited_record_key = request.session.pop('selected_record')
+            data_record.save()
 
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
