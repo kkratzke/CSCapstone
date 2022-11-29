@@ -120,7 +120,7 @@
         </div>
     </nav>
     <h1>{{ table_model }} Record Editor</h1>
-    {% if ask_for_confirmation == 1 %}
+    {% if ask_for_confirmation == "EDITED" %}
         <form action="" method="post"> {% csrf_token %}
             <h5>Are you sure you want to make the following changes to {{ selected_record }}?</h5>
             <ul>
@@ -128,11 +128,29 @@
                   <li>Changed {{ name }} to {{ change }}</li>
               {%  endfor %}
             </ul>
-            <input type="submit" value="Confirm Changes" name="confirm-changes">
+            <input type="submit" value="Edit" name="confirm">
             <input type="submit" value="Cancel" name="cancel-changes">
         </form>
-    {% elif ask_for_confirmation == 2 %}
+    {% elif ask_for_confirmation == "CONFIRM_EDIT" %}
         <h5>Changes successfully saved for {{ selected_record }}!</h5>
+    {% elif ask_for_confirmation == "CLEAR" %}
+        <form action="" method="post"> {% csrf_token %}
+            <h5>Are you sure you want to remove the pictures for {{ selected_record }}?</h5>
+            <p>If you choose "Yes", pictures may not be recoverable at a later point.</p>
+            <input type="submit" value="Clear" name="confirm">
+            <input type="submit" value="Cancel" name="cancel-changes">
+        </form>
+    {% elif ask_for_confirmation == "DELETE" %}
+        <form action="" method="post"> {% csrf_token %}
+            <h5>Are you sure you want to delete {{ selected_record }}?</h5>
+            <p>If you choose "Yes", record may not be recoverable at a later point.</p>
+            <input type="submit" value="Delete" name="confirm">
+            <input type="submit" value="Cancel" name="cancel-changes">
+        </form>
+    {% elif ask_for_confirmation == "CONFIRM_REMOVE" %}
+        {% for message in result_messages %}
+            <h5>{{ message }}</h5>
+        {%  endfor %}
     {% endif %}
     <form action="" method="post"> {% csrf_token %}
         <label for="selected-table">Pick a Table to Edit:</label>
@@ -162,21 +180,32 @@
                 {% else %}
                     <label for="{{ field_name }}">{{ field_name }}: </label>
                 {% endif %}
-                {% if not_editable == True %}
-                    <label>{{ field_value }}</label>
-                {% elif choices is not None %}
+                {% if choices is not None %}
                     <select name={{ field_name }} id={{ field_name }}>
                         {% for choice in choices %}
                             <option value="{{ choice }}" {% if field_value == choice %}selected{% endif %}>{{ choice }}</option>
                         {% endfor %}
                     </select>
                 {% elif field_name == "password" %}
-                    <input type="password" id={{ field_name }} name={{ field_name }} />
+                    <input type="password" id="{{ field_name }}" name="{{ field_name }}" />
+                {% elif field_name == "donation_total" %}
+                    <input type="text" inputmode="numeric" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" pattern="^\d+\.\d{2}$">
+                {% elif not_editable > 0 %}
+                    <input type="text" id="{{ field_name }}" class="readonly-text" name="{{ field_name }}" value="{{ field_value }}" readonly/>
                 {% else %}
-                    <input type="text" id={{ field_name }} name={{ field_name }} value="{{ field_value }}" />
+                    <input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" />
+                    {% if not_editable == 0 %}
+                        <label for="clear-{{ field_name }}">Clear {{ field_name }}: </label>
+                        <input type="checkbox" name="clear-{{ field_name }}" value="Yes"/>
+                    {% endif %}
                 {% endif %}
                 <br>
             {% endfor %}
+            {% if allow_deletion == 2 %}
+                <input type="submit" value="Delete Record" name="delete-record"/>
+            {% else %}
+                <input type="submit" value="Clear Record" name="clear-record">
+            {% endif %}
             <input type="submit" value="Save Changes" name="save-changes">
         </form>
     {% endif %}
@@ -191,6 +220,14 @@
     margin-right: auto;
     margin-left: auto;
     background-color: #FFFFFF;
+  }
+
+  .readonly-text {
+      border: none;
+  }
+
+  .readonly-text:focus {
+      border: none;
   }
 </style>
 

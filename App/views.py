@@ -1,24 +1,18 @@
 import json
 from math import floor, ceil
-from enum import Enum
-
-from django.core import serializers
 from django.core.exceptions import PermissionDenied
-from django.db.models import QuerySet
-
-from App.functions import view_from_database, from_str_to_table_model, create_fields_list, to_dict, getNewName
+from App.functions import view_from_database, from_str_to_table_model, create_fields_list, to_dict, getNewName, \
+    remove_record, clear_field
 from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.contrib import messages
-import datetime
 import hashlib
 import os
 from django.apps import apps
-
 from .functions import create_account, login, edit_profile, getNewName
+from App.confirmation_status import ConfirmationStatus
 
 
 class Homescreen(View):
@@ -375,6 +369,9 @@ class EditDatabase(View):
         if request.session['login'] is None or request.session['role'] != "Admin":
             raise PermissionDenied
 
+        # if 'fields_list' in request.session:
+        #     print(request.session['fields_list'])
+
         if "selected-table" in request.POST:
             table_model = from_str_to_table_model(request.POST['selected-table'])
         else:
@@ -382,18 +379,44 @@ class EditDatabase(View):
 
         table_meta = table_model._meta
         record_key = table_meta.pk
-
-        if "confirm-changes" in request.POST:  # Changes should be saved to database
+        if "delete-record" in request.POST or "clear-record" in request.POST:
+            confirmation_value = ConfirmationStatus.DELETE.name if "delete-record" in request.POST \
+                else ConfirmationStatus.CLEAR.name
+            return render(request, "EditDatabase.html", {"login": request.session['login'],
+                                                         "role": request.session['role'],
+                                                         "tables": [model.__name__ for model
+                                                                    in apps.get_app_config("App").get_models()],
+                                                         "primary_key_values": request.session['primary_key_values'],
+                                                         "table_selected": True,
+                                                         "allow_deletion": request.session['fields_list'][0][2],
+                                                         "selected_record": request.session['selected_record'],
+                                                         "table_model": request.session["selected_table"],
+                                                         "fields_list": request.session['fields_list'],
+                                                         "ask_for_confirmation": confirmation_value})
+        elif "confirm" in request.POST:  # Changes should be saved to database
             keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
             data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
-                                                   request.session['selected_record']})
+                                                  request.session['selected_record']})
+            admin_record = MyUser.objects.get(username__exact=request.session['login'])
+            return_messages = []
+            if request.POST["confirm"] == "Delete":
+                return_messages.append(remove_record(admin_record, data_record))
+                confirm_signal = ConfirmationStatus.CONFIRM_REMOVE.name
+            elif request.POST["confirm"] == "Clear":
+                image_fields = [field.name for field in table_meta.fields if isinstance(field, models.ImageField)]
+                for field in image_fields:
+                    return_messages.append(clear_field(admin_record, data_record, field))
+                confirm_signal = ConfirmationStatus.CONFIRM_REMOVE.name
+            else:
+                for field_name, change in request.session['changes_list']:
+                    if isinstance(table_meta.get_field(field_name), models.ImageField):
+                        clear_field(admin_record, data_record, field_name)
+                    else:
+                        if field_name == "password":
+                            change = hashlib.sha256(change.encode("utf-8")).hexdigest()
+                        setattr(data_record, field_name, change)
+                confirm_signal = ConfirmationStatus.CONFIRM_EDIT.name
 
-            for field_name, change in request.session['changes_list']:
-                if field_name == "password":
-                    change = hashlib.sha256(change.encode("utf-8")).hexdigest()
-                setattr(data_record, field_name, change)
-
-            data_record.save()
             request.session.pop('fields_list')
             edited_record_key = request.session.pop('selected_record')
 
@@ -404,41 +427,53 @@ class EditDatabase(View):
                                                          "primary_key_values": request.session['primary_key_values'],
                                                          "selected_record": edited_record_key,
                                                          "fields_list": [],
-                                                         "ask_for_confirmation": 2})
+                                                         "record_type": request.session['selected_table'],
+                                                         "ask_for_confirmation": confirm_signal,
+                                                         "result_messages": return_messages})
         elif "save-changes" in request.POST:  # Changes are being asked to save to database
             keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
             data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
                                                   request.session['selected_record']})
 
-            warn_about_changes = 0
+            data_from_database = create_fields_list(data_record)
+            warn_about_changes = ConfirmationStatus.NO_MESSAGE
             changes_list = []
-            for fieldTuple in request.session['fields_list']:
-                field_name, _, is_pk_or_fk, value_from_database = fieldTuple
+            for fieldTuple in data_from_database:
+                field_name, _, field_trait_int, value_from_database = fieldTuple
 
-                if is_pk_or_fk is False and value_from_database != request.POST[field_name] and \
+                add_to_changes_list = False
+                if field_trait_int == -1 and value_from_database != request.POST[field_name] and \
                    (field_name != "password" or len(request.POST['password']) > 4):
                     setattr(data_record, field_name, request.POST[field_name])
                     changes_list.append((field_name, getattr(data_record, field_name)))
-                    warn_about_changes = 1
+                    add_to_changes_list = True
+                elif field_trait_int == 0 and request.POST.get(f'clear-{field_name}', "No") == "Yes":
+                    getattr(data_record, field_name).delete(False)
+                    changes_list.append((field_name, ""))
+                    add_to_changes_list = True
+
+                if add_to_changes_list:
+                    warn_about_changes = ConfirmationStatus.EDITED
 
             request.session['changes_list'] = changes_list
-            print(changes_list)
-            print(warn_about_changes)
+            request.session['fields_list'] = create_fields_list(data_record)
+
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
                                                          "tables": [model.__name__ for model
                                                                     in apps.get_app_config("App").get_models()],
                                                          "primary_key_values": request.session['primary_key_values'],
                                                          "table_selected": True,
+                                                         "allow_deletion": request.session['fields_list'][0][2],
                                                          "selected_record": request.session['selected_record'],
                                                          "table_model": request.session["selected_table"],
                                                          "fields_list": request.session['fields_list'],
                                                          "changes_list": request.session['changes_list'],
-                                                         "ask_for_confirmation": warn_about_changes})
+                                                         "ask_for_confirmation": warn_about_changes.name})
 
         elif "selected-record" in request.POST or "cancel-changes" in request.POST:  # Record to be edited from table has been selected
             if "selected-record" in request.POST:
-                request.session['selected_record'] = request.POST['selected-record']
+                request.session['selected_record'] = str(request.POST['selected-record'])
                 keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
 
                 data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
@@ -453,9 +488,10 @@ class EditDatabase(View):
                                                          "primary_key_values": request.session['primary_key_values'],
                                                          "selected_record": request.session['selected_record'],
                                                          "table_selected": True,
+                                                         "allow_deletion": request.session['fields_list'][0][2],
                                                          "table_model": request.session["selected_table"],
                                                          "fields_list": request.session['fields_list'],
-                                                         "ask_for_confirmation": 0})
+                                                         "ask_for_confirmation": ConfirmationStatus.NO_MESSAGE.name})
         else:  # Table to edit has been selected
             request.session['selected_table'] = request.POST['selected-table']
 
@@ -467,7 +503,7 @@ class EditDatabase(View):
                     actual_value = getattr(data_holder, fk_field)
                 else:
                     actual_value = record.pk
-                primary_key_values.append(actual_value)
+                primary_key_values.append(str(actual_value))
 
             request.session['primary_key_values'] = primary_key_values
             return render(request, "EditDatabase.html", {"login": request.session['login'],
@@ -478,7 +514,7 @@ class EditDatabase(View):
                                                          "table_selected": request.session.get("selected_table", None) is not None,
                                                          "table_model": request.session["selected_table"],
                                                          "selected_record": "",
-                                                         "ask_for_confirmation": 0})
+                                                         "ask_for_confirmation": ConfirmationStatus.NO_MESSAGE.name})
 
 
 class ExplorePage(View):
@@ -508,7 +544,8 @@ class PaymentPage(View):
 
 class SearchPage(View):
     def get(self, request):
-        return render(request, "Search.html", {'campaigns': [], "login": request.session['login']})
+        return render(request, "Search.html", {'campaigns': [], "login": request.session['login'],
+                                               "role": request.session['role']})
 
 
 class PicUpload(View):

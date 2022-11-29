@@ -6,7 +6,6 @@ from django.core import serializers
 from App.models import *
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME, DATABASES
 import hashlib
-import boto3
 from django.apps import apps
 
 
@@ -50,7 +49,7 @@ def create_account(uname, email, first, last, pass1, pass2):
         message = "Username already taken"
         reload_content[0] = ''
 
-    elif(valid_email != "Valid"):
+    elif (valid_email != "Valid"):
         message = valid_email
         reload_content[1] = ''
 
@@ -62,15 +61,14 @@ def create_account(uname, email, first, last, pass1, pass2):
         newUser = MyUser(username=uname, password=hashlib.sha256(pass1.encode('utf-8')).hexdigest(),
                          first_name=first, last_name=last, email=email)
         newUser.save()
-        UserPictures(id=newUser).save()
+        UserPictures(username=newUser).save()
 
     return (message, reload_content)
 
 
-def edit_profile(email, first, last, pass1, pass2, owner, userPic, userBanner):
+def edit_profile(email, first, last, pass1, pass2, owner):
     message = ""
     user = MyUser.objects.get(username__iexact=owner)
-    user_media = UserPictures.objects.get(id=user)
 
     if valid_email_format(email) == "Valid":
         emailIn = email
@@ -90,40 +88,19 @@ def edit_profile(email, first, last, pass1, pass2, owner, userPic, userBanner):
         user.email = emailIn
         user.first_name = firstIn
         user.last_name = lastIn
-        if(pass1 == pass2 and pass1 != ""):
+        if (pass1 == pass2 and pass1 != ""):
             user.password = passIn
         user.save()
-        user_media.user_pic = userPic
-        user_media.user_pic.name = user_media.user_pic.name
-        user_media.profile_banner = userBanner
-        user_media.save()
-        # pic_name = user_media.user_pic.name
-        # banner_name = user_media.profile_banner.name
-        # if pic_name != "" or banner_name != "":
-        #     session = boto3.Session(
-        #         aws_access_key_id='AWS_ACCESS_KEY_ID',
-        #         aws_secret_access_key='AWS_SECRET_ACCESS_KEY',
-        #     )
-        #     s3 = session.resource("s3")
-        #     if pic_name != "":
-        #         user_media.user_pic.name = AWS_STORAGE_BUCKET_NAME + "user_pic/" + pic_name
-        #         s3.meta.client.upload_file(Filename=pic_name, Bucket=AWS_STORAGE_BUCKET_NAME, Key="user_pic/" + pic_name)
-        #         # s3.Bucket(AWS_STORAGE_BUCKET_NAME).upload_file(pic_name, "user_pic/" + pic_name)
-        #     if banner_name != "":
-        #         user_media.profile_banner.name = AWS_STORAGE_BUCKET_NAME + "profile_banner/" + banner_name
-        #         s3.meta.client.upload_file(Filename=pic_name, Bucket=AWS_STORAGE_BUCKET_NAME,
-        #                                    Key="profile_banner/" + banner_name)
-        #         # s3.Bucket(AWS_STORAGE_BUCKET_NAME).upload_file(banner_name, "profile_banner/" + banner_name)
-        #     user_media.save()
 
     return message
 
-def getNewName(file_type, name):
-  new_name = str(name) + '.png'
 
-  return new_name
-  
-  
+def getNewName(file_type, name):
+    new_name = str(name) + '.png'
+
+    return new_name
+
+
 def db_connection():
     db_settings = DATABASES['default']
     return mysql.connector.connect(host=db_settings['HOST'],
@@ -170,10 +147,19 @@ def create_fields_list(instance) -> list:
 
     for field in [f.name for f in table_meta.fields]:
         choices_for_field = table_meta.get_field(field).choices
-        is_pk_or_fk = table_meta.pk.name == field or isinstance(table_meta.get_field(field), models.ForeignKey)
+        field_to_check = table_meta.get_field(field)
+        # 2 if primary key doesn't reference another model, 1 if foreign key or primary key that does reference
+        # another model, 0 if ImageField, -1 otherwise
+        is_pk_or_fk = 2 if table_meta.pk.name == field and table_meta.pk.related_model is None else \
+            1 if isinstance(field_to_check, models.ForeignKey) or field_to_check.editable == False else \
+            0 if isinstance(field_to_check, models.ImageField) else \
+            -1
 
         if choices_for_field is not None:
             choices_for_field = [t[0] for t in choices_for_field]
+
+        if isinstance(field_to_check, models.DecimalField) or isinstance(field_to_check, models.DateTimeField):
+            instance_dist[field] = str(instance_dist[field])
 
         fields_list.append((field, choices_for_field, is_pk_or_fk, instance_dist[field]))
 
@@ -187,4 +173,25 @@ def to_dict(instance):
     instance_dict.update(serialized_data['fields'])
     return instance_dict
 
+
+def remove_record(deleter: MyUser, deletee: "App.models") -> str:
+    if isinstance(deletee, MyUser):
+        return deleter.delete_user(deletee)
+    elif isinstance(deletee, Campaign):
+        return deleter.delete_campaign(deletee)
+    else:
+        return "No method exists to delete the given deletee"
+
+
+def clear_field(deleter: MyUser, deletee: "App.models", field_name: str) -> str:
+    if field_name == "user_pic":
+        return deleter.delete_user_pic(deletee.username)
+    elif field_name == "profile_banner":
+        return deleter.delete_profile_banner(deletee.username)
+    elif field_name == "campaign pic":
+        return deletee.campaign_code.delete_campaign_pic(deleter)
+    elif field_name == "bg_pic":
+        return deletee.campaign_code.delete_bg_pic(deleter)
+    else:
+        return f"No method exists to clear {field_name} for the given deletee"
 
