@@ -49,11 +49,11 @@
                         View Database
                     </a>
                   </li>
-                  {% comment %}<li class="nav-item">
+                  <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/edit_database">
                         Edit Database
                     </a>
-                  </li>{% endcomment %}
+                  </li>
               {% endif %}
             </ul>
               {% if login is None %}
@@ -145,6 +145,8 @@
                         </select>
                     {% elif field_name == "password" %}
                         <input type="password" id={{ field_name }} name={{ field_name }} />
+                    {% elif field_name == "donation_total" %}
+                        <input type="text" inputmode="numeric" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" pattern="^(([1-9]\d{0,7})|(0))\.\d{2}$">
                     {% else %}
                         <input type="text" id={{ field_name }} name={{ field_name }} />
                     {% endif %}

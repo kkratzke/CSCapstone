@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME
 from django.core.validators import validate_image_file_extension
@@ -49,26 +50,25 @@ class MyUser(models.Model):
 
     def delete_user_pic(self, deletee: "MyUser"):
         if self.permission_to_delete_user(deletee):
-            UserPictures.objects.get(id=deletee).user_pic.delete()
+            UserPictures.objects.get(username=deletee).user_pic.delete()
             return f"The user picture for {deletee.username} has been deleted"
         else:
             return "You don't have permission to delete this user's picture"
 
     def delete_profile_banner(self, deletee: "MyUser"):
         if self.permission_to_delete_user(deletee):
-            UserPictures.objects.get(id=deletee).profile_banner.delete()
+            UserPictures.objects.get(username=deletee).profile_banner.delete()
             return f"The profile banner for {deletee.username} has been deleted"
         else:
             return "You don't have permission to delete this user's profile banner"
 
-    def delete_campaign(self, code_number):
-        if self.permission_to_delete_campaign(code_number):
+    def delete_campaign(self, campaign_to_delete: "Campaign"):
+        if self.permission_to_delete_campaign(campaign_to_delete):
             try:
-                campaign_to_delete = Campaign.objects.get(campaign_code=code_number)
-            except Campaign.DoesNotExist:
-                return f"Campaign {code_number} doesn't exist"
-            else:
                 campaign_to_delete.delete()
+            except Campaign.DoesNotExist:
+                return f"Campaign {campaign_to_delete.campaign_name} doesn't exist"
+            else:
                 return f"Campaign \"{campaign_to_delete.campaign_name}\" has been deleted"
         else:
             return "You don't have permission to delete this campaign"
@@ -77,13 +77,8 @@ class MyUser(models.Model):
         return (self.role == ROLES[0][0] and user_to_delete.role != ROLES[0][0]) or \
                (self.role == ROLES[1][0] and user_to_delete == self)
 
-    def permission_to_delete_campaign(self, code_of_campaign: int) -> bool:
-        try:
-            campaign_to_delete = Campaign.objects.get(campaign_code=code_of_campaign)
-        except Campaign.DoesNotExist:
-            return False
-        else:
-            return self.role == ROLES[0][0] or campaign_to_delete.campaign_owner == self
+    def permission_to_delete_campaign(self, campaign_to_delete: "Campaign") -> bool:
+        return self.role == ROLES[0][0] or campaign_to_delete.campaign_owner == self
 
 
 class Campaign(models.Model):
@@ -95,8 +90,8 @@ class Campaign(models.Model):
                                        db_column="campaign_owner")
     campaign_description = models.CharField(max_length=500, blank=True)
     subscribers = models.ManyToManyField(MyUser, related_name="subscribers")
-
-    subscribers = models.ManyToManyField(MyUser, related_name="subscribers")
+    donation_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    datetime_started = models.DateTimeField(default=timezone.now(), editable=False)
 
     def str(self):
         return self.campaign_name
@@ -130,3 +125,10 @@ class CampaignPictures(models.Model):
     bg_pic = models.ImageField(upload_to="backgrounds/", default=None, validators=[validate_image_file_extension])
     campaign_pic = models.ImageField(upload_to="campaign_pic/",
                                      default=None, validators=[validate_image_file_extension])
+
+
+# class PaymentMethods(models.Model):
+#     user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_column="user_id")
+#     card_number = models.CharField(max_length=19, min_length=19, blank=False)
+#     security_code = models.IntegerField(max_length=3, min_length=3)
+#     expiration_date = models.DateField()

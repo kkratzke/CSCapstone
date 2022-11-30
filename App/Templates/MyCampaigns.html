@@ -43,21 +43,36 @@
           <a class="nav-link" href="search/" name="search">
             Search
           </a>
+          </li>       
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+                Explore
+            </a>
           </li>
-          {% if role == "Admin"%}
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/view_database">
-                  View Database
-              </a>
-            </li>
-            {% comment %}<li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/edit_database">
-                  Edit Database
-              </a>
-            </li>{% endcomment %}
-          {% endif %}
-        </ul>
-             {% if login is None %}
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              Popular
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link">
+                Help
+            </a>
+          </li>
+            {% if role == "Admin"%}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/view_database">
+                    View Database
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/edit_database">
+                    Edit Database
+                </a>
+              </li>
+                {% endif %}
+            </ul>
+              {% if login is None %}
                 <a class="nav-link" href="#">
                 <form action="/" method="post"> {% csrf_token %}
                   <div class="pt-2">

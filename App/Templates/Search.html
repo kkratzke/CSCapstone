@@ -37,18 +37,18 @@
                     Help
                 </a>
               </li>
-                {% if role == "Admin"%}
+                {% if role == "Admin" %}
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/view_database">
                         View Database
                     </a>
                   </li>
-                  {% comment %}<li class="nav-item">
+                  <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/edit_database">
                         Edit Database
                     </a>
-                  </li>{% endcomment %}
-               {% endif %}
+                  </li>
+                {% endif %}
             </ul>
               {% if login is None %}
                 <a class="nav-link" href="#">
