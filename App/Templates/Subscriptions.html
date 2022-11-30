@@ -17,10 +17,10 @@
 <body>
     <nav class="navbar navbar-expand d-flex flex-column align-item-start shadow" id="sidebar">
         <a href="#" class="navbar-brand mt-5">
-            <h3><b>My Account</b></h3>
+            <h3>My Account</h3>
             <hr>
         </a>
-        <ul class="navbar-nav d-flex flex-column mt-5 w-100 align-item-start">
+        <ul class="nav nav-tabs d-flex flex-column mt-5 w-100 align-item-start">
             <li class="nav-item w-100">
                 <a href="#" class="nav-link pl-4">Account</a>
             </li>
@@ -31,7 +31,10 @@
                 <a href="#" class="nav-link pl-4">Campaigns</a>
             </li>
             <li class="nav-item w-100">
-                <a href="#" class="nav-link pl-4">Subscriptions</a>
+                <a href="subscription/" class="nav-link active pl-4">Subscriptions</a>
+            </li>
+            <li class="nav-item w-100">
+                <a href="payment/" class="nav-link pl-4">Payment</a>
             </li>
         </ul>
     </nav>
@@ -81,7 +84,7 @@
         height: 100%;
         position:fixed;
         border-radius: 10px;
-        background-color: #FFB400;
+        background-color: #6936F5;
     }
     .nav-link{
         font-size: 20px;
@@ -91,11 +94,16 @@
         font-family: "Montserrat", sans-serif;
         font-weight: 300;
     }
+    h3{
+        color: white;
+        font-family: "Cabin", sans-serif;
+        font-weight: 700;
+    }
 
     .nav-link:active,
     .nav-link:focus,
     .nav-link:hover{
-        background-color: #ffde8e;
+        background-color: #cbbafa;
         color: black;
         border-radius: 10px;
     }

@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from App.models import *
 from django.conf import settings
-from .uploads import getNewName
+from .functions import getNewName
 from django.http import HttpResponse, Http404
 from django.contrib import messages
 import datetime

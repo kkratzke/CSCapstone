@@ -7,9 +7,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://kit.fontawesome.com/3933ca2144.js" crossorigin="anonymous"></script>
     <title>Log In</title>
 </head>
 <body>
+    <div class="d-flex bd-highlight mb-3">
+        <div class="p-2 bd-highlight">
+            <button class="btn btn-secondary btn-block mt-3" onclick="history.go(-1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+    </div>
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-3">
@@ -24,7 +30,7 @@
                         <label for="passwordInput">Password</label>
                         <input type="password" name="psw" class="form-control" id="passwordInput" aria-describedby="password" placeholder="Enter password...">
                     </div>
-                    <button class="btn btn-primary btn-block mt-3" name="login_button">Log In</button>
+                    <button class="btn btn-block mt-3" name="login_button">Log In</button>
                     <div class="row mt-3">
                         <p class="mb-0">Don't have an account?</p>
                         <a href="{% url 'create_account_page' %}" class="mt-0">Create an Account</a>
@@ -40,13 +46,21 @@
 </html>
 <style>
 body{
-    background-color: #FFB400;
+    background-color: #6936F5;
 }
-.btn-primary{
+.btn{
     background-color: #FFB400;
     color: black;
     width: 100%;
 }
+.btn:active,
+    .btn:focus,
+    .btn:hover{
+        background-color: #ffde8e!important;
+        color: black!important;
+        border-width: 2px!important;
+        border-color: #000000!important;
+    }
 .form-container{
     position: absolute;
     top: 25%;

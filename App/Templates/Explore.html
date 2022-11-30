@@ -14,14 +14,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com"> 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,700;1,400&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/3933ca2144.js" crossorigin="anonymous"></script>
     <title>Explore</title>
 </head>
 <body>
     <div class="row main">
         <div class="col-2 filter-section">
-            <a class="go_back" onclick="history.go(-1)"><i class="fa-regular fa-arrow-left"></i>Back</a>
-            <h1 class="pt-4 pb-5">Explore</h1>
+            <div class="d-flex justify-content-center">
+                <h1 class="pt-4 pb-5">Explore</h1>
+            </div>
             <button type="button dropdown_button" class="btn" data-bs-toggle="collapse" data-bs-target="#type">
                 Type of Campaign
                 <i class="fa-regular fa-arrow-down"></i>
@@ -82,12 +86,17 @@
                     </label>
                 </div>
             </div>
+            <div class="d-flex bd-highlight mb-3 position-absolute bottom-0">
+                <div class="p-2 bd-highlight">
+                    <button class="btn btn-secondary btn-block" onclick="history.go(-1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                </div>
+            </div>
         </div>
         <div class="col-10 contents">
-            <div class="row ml-3 mt-5">
+            <div class="row ml-3 pt-5 welcome-explore">
                 <div class="col-4">
-                    <h2>Welcome, Explore</h2>
-                    <p>Welcome back explore some campaigns</p>
+                    <h2>Welcome Explorer!</h2>
+                    <p>Poke around and find something you like</p>
                 </div>
                 <div class="col-3"></div>
                 <div class="col-4">
@@ -97,45 +106,69 @@
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
+            <div class="row pt-4 card-section">
                 <div class="col-4 justify-content-center">
-                    <div class="container">
-                        <div class="card">
-                            <img src="../static/images/nature_template.jpeg" alt="" class="card-img-top">
-                            <div class="intro">
-                                <h2>Campaign Name 1</h2>
-                                <p class="description">This is the description</p>
-                                <p class="icon">0 <i class="fa-solid fa-eye"></i></p>
-                                <p class="icon">0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
-                            </div>
+                    <div class="card-fluid pl-1">
+                        <div class="d-flex justify-content-end">
+                            <p class="popularity-icon card_btn">0  <i class="fa-solid fa-fire fa-lg"></i></p>
                         </div>
-                    </div>
+                        <img class="card-img-top" src="../static/images/nature_template.jpeg" alt="Card image cap">
+                        <div class="card-body">
+                            <h4 class="card-title mt-1"><b>Campaign Name</b></h4>
+                            <p class="card-text">This is the description</p>
+                            <div class="progress my-3">
+                                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex bd-highlight">
+                                <div class="ms-auto bd-highlight popularity"><p class="popularity-icon">0  <i class="fa-solid fa-hand-holding-dollar fa-md"></i></p></div>
+                            </div>
+                          <div class="d-flex justify-content-center pb-2">
+                            <button class="btn view-campaign-btn">View Campaign</button>
+                          </div>
+                        </div>
+                      </div>
                 </div>
                 <div class="col-4 justify-content-center">
-                    <div class="container">
-                        <div class="card">
-                            <img src="../static/images/nature_template.jpeg" alt="" class="card-img-top">
-                            <div class="intro">
-                                <h2>Campaign Name 2</h2>
-                                <p class="description">This is the description</p>
-                                <p class="icon">0 <i class="fa-solid fa-eye"></i></p>
-                                <p class="icon">0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
-                            </div>
+                    <div class="card-fluid pl-1">
+                        <div class="d-flex justify-content-end">
+                            <p class="popularity-icon card_btn">0  <i class="fa-solid fa-fire fa-lg"></i></p>
                         </div>
-                    </div>
+                        <img class="card-img-top" src="../static/images/nature_template.jpeg" alt="Card image cap">
+                        <div class="card-body">
+                            <h4 class="card-title mt-1"><b>Campaign Name</b></h4>
+                            <p class="card-text">This is the description</p>
+                            <div class="progress my-3">
+                                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 80%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex bd-highlight">
+                                <div class="ms-auto bd-highlight popularity"><p class="popularity-icon">0  <i class="fa-solid fa-hand-holding-dollar fa-md"></i></p></div>
+                            </div>
+                          <div class="d-flex justify-content-center pb-2">
+                            <button class="btn view-campaign-btn">View Campaign</button>
+                          </div>
+                        </div>
+                      </div>
                 </div>
                 <div class="col-4 justify-content-center">
-                    <div class="container">
-                        <div class="card">
-                            <img src="../static/images/nature_template.jpeg" alt="" class="card-img-top">
-                            <div class="intro">
-                                <h2>Campaign Name 3</h2>
-                                <p class="description">This is the description</p>
-                                <p class="icon">0 <i class="fa-solid fa-eye"></i></p>
-                                <p class="icon">0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
-                            </div>
+                    <div class="card-fluid pl-1">
+                        <div class="d-flex justify-content-end">
+                            <p class="popularity-icon card_btn">0  <i class="fa-solid fa-fire fa-lg"></i></p>
                         </div>
-                    </div>
+                        <img class="card-img-top" src="../static/images/nature_template.jpeg" alt="Card image cap">
+                        <div class="card-body">
+                            <h4 class="card-title mt-1"><b>Campaign Name</b></h4>
+                            <p class="card-text">This is the description</p>
+                            <div class="progress my-3">
+                                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 45%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex bd-highlight">
+                                <div class="ms-auto bd-highlight popularity"><p class="popularity-icon">0  <i class="fa-solid fa-hand-holding-dollar fa-md"></i></p></div>
+                            </div>
+                          <div class="d-flex justify-content-center pb-2">
+                            <button class="btn view-campaign-btn">View Campaign</button>
+                          </div>
+                        </div>
+                      </div>
                 </div>
             </div>
         </div>
@@ -144,21 +177,29 @@
 </body>
 </html>
 <style>
-    h1{
-        margin-left: 20px;
+    .card_btn{
+        background-color: none;
+        position: absolute;
+        float: right;
+        margin-right: 15px;
+        margin-top: 10px;
     }
-    .icon{
-     display: inline-block;
-     padding-left: 25px;
-     visibility: hidden;
-     opacity: 0;
+    .view-campaign-btn{
+        background-color: #FFB400;
+        text-align: center!important;
+    }
+    h1{
+        font-family: "Cabin", sans-serif;
+        font-weight: 700;
     }
     h2{
+        font-family: "Cabin", sans-serif;
+        font-weight: 400;
         margin-left: 10px;
         margin-top: 10px;
     }
     p{
-        margin-left: 10px;
+        padding-top:5px;
     }
     .intro{
      position: absolute;
@@ -170,41 +211,19 @@
      color: #FFFFFF;
      border-radius: 10px;
    }
-   .description{
-     padding-left: 10px;
-     visibility: hidden;
-     opacity: 0;
-   }
-   .card:hover{
-     cursor: pointer;
-   }
-   .card:hover .intro{
-     height: 100%;
-   }
-   .card:hover .icon{
-    opacity: 1;
-    visibility: visible;
-   }
-   .card:hover .description{
-     opacity: 1;
-     visibility: visible;
-   }
     .contents_header{
         height:40px;
-    }
-    .contents{
-        background-color: #f2f2f0;
     }
     .filter-section{
         background-color: white;
         height: 100vh;
         border-color: #000000;
         border-width: 10px;
-        border-top-right-radius: 80px;
+        border-top-right-radius: 30px;
     }
-    .dropdown-toggle{
-        width:100%;
-        background-color: aquamarine;
+    .card-section{
+        height: 100vh;
+        background-color: #f2f2f0;
     }
     .btn{
         width: 105%;
@@ -234,7 +253,8 @@
     }
     .card-img-top{
         height: 250px;
-        border-radius: 20px;
+        border-top-right-radius: 20px;
+        border-top-left-radius: 20px;
     }
     .card{
         border-radius: 20px;
@@ -250,7 +270,7 @@
         height: 100vh;
     }
     body{
-        background-color: #fff;
+        background-color: #6936F5;
     }
     .form-check{
         padding-left: 40px;
@@ -260,5 +280,11 @@
         color:inherit;
         text-decoration:none;
     }
-
+    .welcome-explore{
+        background-color: #6936F5;
+        color: white;
+    }
+    .btn-secondary{
+        background-color: #FFB400;
+    }
 </style>
