@@ -19,7 +19,7 @@
 <body>
   <nav class="navbar navbar-expand-lg rounded shadow mt-2">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <img class="logo-image" src="./static/images/lending-hand.png" alt="">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
@@ -35,6 +35,21 @@
             </form>
           </li>
           <li class="nav-item">
+            <a class="nav-link">
+                Help
+            </a>
+          </li>
+          <li class="nav-item">
+          <a class="nav-link" href="search/" name="search">
+            Search
+          </a>
+          </li>       
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+                Explore
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#">
               Popular
             </a>
@@ -44,39 +59,17 @@
                 Help
             </a>
           </li>
-          </li>
-                <li class="nav-item">
-                <a class="nav-link" href="search/" name="search">
-                  Search
-                </a>
-              </li>
-
+            {% if role == "Admin"%}
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                    Explore
+                <a class="nav-link active" aria-current="page" href="/view_database">
+                    View Database
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  Popular
+                <a class="nav-link active" aria-current="page" href="/edit_database">
+                    Edit Database
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link">
-                    Help
-                </a>
-              </li>
-                {% if role == "Admin"%}
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/view_database">
-                        View Database
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/edit_database">
-                        Edit Database
-                    </a>
-                  </li>
                 {% endif %}
             </ul>
               {% if login is None %}
@@ -144,7 +137,7 @@
       </div>
     </div>
   </nav>
-    <div class="row">
+    <div class="row pt-5">
       <h1>My Campaigns</h1>
       <hr>
     </div>
@@ -200,7 +193,13 @@
     width: 75%;
     margin-right: auto;
     margin-left: auto;
-    background-color: #FFFFFF;
+    background-color: #6936F5;
+  }
+  .nav-link{
+    color:white;
+  }
+  .navbar-nav{
+    margin-top:10px;
   }
   h1 {
   font-family: "Montserrat", sans-serif;
@@ -240,7 +239,7 @@
     cursor: pointer;
   }
   .card:hover .intro{
-    height: 50%;
+    height: 75%;
   }
   .card:hover .description{
     opacity: 1;
@@ -251,6 +250,9 @@
   }
   .fa-pencil{
     color:darkorange;
+  }
+  .logo-image{
+    width: 60px;
   }
 </style>
 
