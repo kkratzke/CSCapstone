@@ -1,6 +1,6 @@
 from itertools import chain
 
-import mysql.connector
+#import mysql.connector
 from django.core import serializers
 
 from App.models import *

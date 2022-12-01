@@ -13,6 +13,7 @@ import os
 from django.apps import apps
 from .functions import create_account, login, edit_profile, getNewName
 from App.confirmation_status import ConfirmationStatus
+from django.db.models import Count
 
 
 class Homescreen(View):
@@ -516,9 +517,64 @@ class EditDatabase(View):
                                                          "ask_for_confirmation": ConfirmationStatus.NO_MESSAGE.name})
 
 
+def mapping(s):
+    if s == 'Medical':
+        return 0
+    if s == 'Memorial':
+        return 1
+    if s == 'Emergency':
+        return 2
+    if s == 'Education':
+        return 3
+    if s == 'Other':
+        return 4
+
 class ExplorePage(View):
     def get(self, request):
-        return render(request, "Explore.html")
+        return render(request, "Explore.html" )
+
+    def post(self, request):
+        if request.method == 'POST' and "filter" in request.POST:
+            types = [int(request.POST.get('med', 0)), int(request.POST.get('mem', 0)), int(request.POST.get('emer', 0)),
+                     int(request.POST.get('edu', 0)), int(request.POST.get('other', 0))]
+            campaigns = Campaign.objects.annotate(subs=Count('subscribers'))
+            campaigns_copy = Campaign.objects.all()
+            camps = []
+            if int(request.POST.get('new_old', 0)) == 1:
+                campaigns = campaigns.order_by('-datetime_started').values()
+            elif int(request.POST.get('old_new', 0)) == 1:
+                campaigns = campaigns.order_by('datetime_started').values()
+            elif int(request.POST.get('popular', 0)) == 1:
+                campaigns = campaigns.order_by('subs').values()
+
+            for c in campaigns:
+                if types[mapping(c['campaign_type'])] == 1:
+                    cd = c['campaign_code']
+                    for i in campaigns_copy:
+                        if i.campaign_code == cd:
+                            camps.append(i)
+
+            print(camps)
+            return render(request, "Explore.html", {'login': request.session['login'], 'campaigns': camps,
+                                                    "role": request.session['role']})
+
+        if request.method == 'POST' and "start_search" in request.POST:
+            search = request.POST['search']
+            newList = []
+            try:
+                search = int(search)
+                newList = Campaign.objects.filter(campaign_code__exact=search)
+
+            except:
+                search = search.lower()
+                tempList = Campaign.objects.all()
+                for c in tempList:
+                    if str(c.campaign_description).lower().__contains__(search) or str(c.campaign_name).lower().__contains__(search):
+                        newList.append(c)
+
+            return render(request, "Explore.html", {'campaigns': newList, "login": request.session['login'],
+                                                   "role": request.session['role']})
+
         
         
 class SubscriptionPage(View):
