@@ -579,7 +579,16 @@ class ExplorePage(View):
         
 class SubscriptionPage(View):
     def get(self, request):
-        return render(request, "Subscriptions.html")
+        camps = []
+        user = MyUser.objects.get(username__iexact=request.session['login'])
+        campaigns = Campaign.objects.all()
+        for x in campaigns:
+            for y in x.subscribers.all():
+                if y == user:
+                    camps.append(x)
+        print(camps)
+        return render(request, "Subscriptions.html", {'campaigns': camps, "login": request.session['login'],
+                                                   "role": request.session['role']})
         
         
 class AccountPage(View):

@@ -46,37 +46,24 @@
             <h1>Subscriptions</h1>
             <hr>
         </div>
-        <div class="row">
-            <div class="col-6 card"> 
+        <div class="row pt-4 card-section">
+            {% for i in campaigns %}
+                <div class="col-6 card">
                 <div class="row">
                     <div class="col-6 my-2">
-                        <img src="../static/images/nature_template.jpeg" alt="" class="campaign-img">
+                        <img src="./static/images/media/campaign_pic/{{ i.campaign_code }}.png" alt="" class="campaign-img">
                     </div>
                     <div class="col-6">
-                        <h4>Campaign Name</h4>
-                        <p class="description">This is the description</p>
+                        <h4>{{ i.campaign_name}}</h4>
+                        <p class="description">{{ i.campaign_description}}</p>
                         <div class="icons">
-                            <p class="icon">0 <i class="fa-solid fa-eye"></i></p>
+                            <p class="icon">{{ i.subscribers.count }} <i class="fa-solid fa-eye"></i></p>
                             <p class="icon">0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-6 card"> 
-                <div class="row">
-                    <div class="col-6 my-2">
-                        <img src="../static/images/nature_template.jpeg" alt="" class="campaign-img">
-                    </div>
-                    <div class="col-6">
-                        <h4>Campaign Name</h4>
-                        <p class="description">This is the description</p>
-                        <div class="icons">
-                            <p class="icon">0 <i class="fa-solid fa-eye"></i></p>
-                            <p class="icon">0 <i class="fa-solid fa-circle-dollar-to-slot"></i></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </body>
