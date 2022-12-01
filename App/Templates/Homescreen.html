@@ -183,7 +183,7 @@
     </div>
     <div class="row new-campaigns-container mt-1">
       <div class="d-flex justify-content-center">
-        <h1 class="new-campaigns">Newest Campaigns</h1> 
+        <h1 class="new-campaigns">Most Popular Campaigns</h1>
       </div>
       <div class="row">
         {% for campaign in campaign_index%}
@@ -200,7 +200,10 @@
               </div>
               <p class="card-text">{{ campaign.campaign_description }}</p>
               <div class="d-flex justify-content-center pb-2">
-                <button class="btn view-campaign-btn">View Campaign</button>
+                <form action="../explore/" method="post"> {% csrf_token %}
+                    <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_code"></input>
+                    <button type="submit" name="view_campaign" class="btn view-campaign-btn">View Campaign</button>
+                </form>
               </div>
             </div>
           </div>

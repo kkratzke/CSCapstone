@@ -546,6 +546,11 @@ class ExplorePage(View):
         return render(request, "Explore.html" )
 
     def post(self, request):
+
+        if request.method == 'POST' and "view_campaign" in request.POST:
+            path = '../ViewCampaign/' + str(request.POST['campaign_code'])
+            return redirect(path, request)
+
         if request.method == 'POST' and "filter" in request.POST:
             types = [int(request.POST.get('med', 0)), int(request.POST.get('mem', 0)), int(request.POST.get('emer', 0)),
                      int(request.POST.get('edu', 0)), int(request.POST.get('other', 0))]
