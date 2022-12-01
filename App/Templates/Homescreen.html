@@ -195,8 +195,8 @@
                 <h4 class="card-title">{{ campaign.campaign_name }}</h4>
               </div>
               <div class="d-flex bd-highlight">
-                <div class="bd-highlight"><p class="type-of-campaign">Type</p></div>
-                <div class="ms-auto bd-highlight popularity"><p class="popularity-icon">0  <i class="fa-solid fa-fire fa-lg"></i></p></div>
+                <div class="bd-highlight"><p class="type-of-campaign">{{ campaign.campaign_type }}</p></div>
+                <div class="ms-auto bd-highlight popularity"><p class="popularity-icon">{{ campaign.subscribers.count }}  <i class="fa-solid fa-fire fa-lg"></i></p></div>
               </div>
               <p class="card-text">{{ campaign.campaign_description }}</p>
               <div class="d-flex justify-content-center pb-2">

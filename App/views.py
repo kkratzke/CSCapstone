@@ -15,17 +15,30 @@ from .functions import create_account, login, edit_profile, getNewName
 from App.confirmation_status import ConfirmationStatus
 from django.db.models import Count
 
+def top_3_popular():
+    campaigns = Campaign.objects.annotate(subs=Count('subscribers'))
+    campaigns = campaigns.order_by('-subs').values()[:3]
+    campaigns_copy = Campaign.objects.all()
+    camps = []
+
+    for c in campaigns:
+        cd = c['campaign_code']
+        for i in campaigns_copy:
+            if i.campaign_code == cd:
+                camps.append(i)
+
+    return camps
+
 
 class Homescreen(View):
     def get(self, request):
-        index = Campaign.objects.all()[:3]
 
         if "login" not in request.session:
             request.session['login'] = None
         if "role" not in request.session:
             request.session['role'] = None
 
-        return render(request, "Homescreen.html", {"campaign_index": index, 'login': request.session["login"],
+        return render(request, "Homescreen.html", {"campaign_index": top_3_popular(), 'login': request.session["login"],
                                                    "role": request.session["role"]})
 
     def post(self, request):
@@ -47,7 +60,7 @@ class Homescreen(View):
             else:
                 request.session['login'] = request.POST['uname']
                 request.session['role'] = MyUser.objects.get(username=request.POST['uname']).role
-                return render(request, "Homescreen.html", {"login": request.session['login'],
+                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": top_3_popular(),
                                                            "role": request.session['role']})
 
         if request.method == 'POST' and "create_account_button" in request.POST:
@@ -102,7 +115,7 @@ class Homescreen(View):
                 newCampaign.save()
                 newCampaignPictures.save()
 
-                return render(request, "Homescreen.html", {"login": request.session['login'],
+                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": top_3_popular(),
                                                            "role": request.session['role']})
 
         if request.method == 'POST' and "search_page" in request.POST:
@@ -134,9 +147,8 @@ class Homescreen(View):
                                                    "role": request.session['role']})
 
         if request.method == 'POST' and "go_home" in request.POST:
-            index = Campaign.objects.all()[:3]
-            return render(request, "Homescreen.html", {"campaign_index": index, "login": request.session['login'],
-                                                       "role": request.session['role']})
+            return render(request, "Homescreen.html", {"campaign_index": top_3_popular(), "login": request.session['login'],
+                                                    "role": request.session['role']})
 
         if request.method == 'POST' and "view_campaign" in request.POST:
             path = '/ViewCampaign/' + str(request.POST['campaign_code'])
@@ -242,7 +254,7 @@ class Homescreen(View):
             if message != "":
                 return render(request, "Profile.html", {"message": message, "reload_content": reload_content})
             else:
-                return render(request, "Homescreen.html", {"login": request.session['login'],
+                return render(request, "Homescreen.html", {"login": request.session['login'], "campaign_index": top_3_popular(),
                                                            "role": request.session['role']})
 
 
@@ -538,6 +550,7 @@ class ExplorePage(View):
             types = [int(request.POST.get('med', 0)), int(request.POST.get('mem', 0)), int(request.POST.get('emer', 0)),
                      int(request.POST.get('edu', 0)), int(request.POST.get('other', 0))]
             campaigns = Campaign.objects.annotate(subs=Count('subscribers'))
+            campaigns = campaigns.order_by('-subs').values()
             campaigns_copy = Campaign.objects.all()
             camps = []
             if int(request.POST.get('new_old', 0)) == 1:
@@ -545,7 +558,7 @@ class ExplorePage(View):
             elif int(request.POST.get('old_new', 0)) == 1:
                 campaigns = campaigns.order_by('datetime_started').values()
             elif int(request.POST.get('popular', 0)) == 1:
-                campaigns = campaigns.order_by('subs').values()
+                campaigns = campaigns.order_by('-subs').values()
 
             for c in campaigns:
                 if types[mapping(c['campaign_type'])] == 1:
