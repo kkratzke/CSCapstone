@@ -418,20 +418,23 @@ class EditDatabase(View):
                     return_messages.append(clear_field(admin_record, data_record, field))
                 confirm_signal = ConfirmationStatus.CONFIRM_REMOVE.name
             else:
+                image_fields = []
                 for field_name, change in request.session['changes_list']:
-                    print(field_name, change)
                     if isinstance(table_meta.get_field(field_name), models.ImageField):
-                        clear_field(admin_record, data_record, field_name)
+                        image_fields.append(field_name)
                     else:
                         if field_name == "password":
                             change = hashlib.sha256(change.encode("utf-8")).hexdigest()
                         setattr(data_record, field_name, change)
+
+                data_record.save()
+                for field in image_fields:
+                    clear_field(admin_record, data_record, field)
                 confirm_signal = ConfirmationStatus.CONFIRM_EDIT.name
                 data_record.save()
 
             request.session.pop('fields_list')
             edited_record_key = request.session.pop('selected_record')
-
 
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
@@ -470,7 +473,7 @@ class EditDatabase(View):
 
             request.session['changes_list'] = changes_list
             request.session['fields_list'] = create_fields_list(data_record)
-
+            print(request.session['changes_list'])
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
                                                          "tables": [model.__name__ for model
@@ -487,12 +490,13 @@ class EditDatabase(View):
         elif "selected-record" in request.POST or "cancel-changes" in request.POST:  # Record to be edited from table has been selected
             if "selected-record" in request.POST:
                 request.session['selected_record'] = str(request.POST['selected-record'])
-                keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
 
-                data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
-                                                         request.POST['selected-record']})
+            keyword_middle_part = "__" + record_key.to_fields[0] if record_key.related_model is not None else ""
 
-                request.session['fields_list'] = create_fields_list(data_record)
+            data_record = table_model.objects.get(**{record_key.name + keyword_middle_part + "__iexact":
+                                                  request.session['selected_record']})
+
+            request.session['fields_list'] = create_fields_list(data_record)
 
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
@@ -502,7 +506,8 @@ class EditDatabase(View):
                                                          "selected_record": request.session['selected_record'],
                                                          "table_selected": True,
                                                          "allow_deletion": request.session['fields_list'][0][2],
-                                                         "table_model": request.session["selected_table"],
+                                                         "table_model": request.session.get("selected_table",
+                                                                                            request.POST.get("selected-record", "")),
                                                          "fields_list": request.session['fields_list'],
                                                          "ask_for_confirmation": ConfirmationStatus.NO_MESSAGE.name})
         else:  # Table to edit has been selected

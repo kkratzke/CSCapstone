@@ -1,6 +1,8 @@
+import os
+
 from django.db import models
 from django.utils import timezone
-
+from CSCapstone import settings
 from CSCapstone.settings import AWS_STORAGE_BUCKET_NAME
 from django.core.validators import validate_image_file_extension
 
@@ -24,6 +26,14 @@ STATUS = (
     ("Canceled", "Canceled"),
     ("End", "End"),
 )
+
+
+def remove_image(field_name: str, image_name: str):
+    file = image_name + ".png"
+    location = f'%s/{field_name}' % settings.MEDIA_ROOT
+    path = os.path.join(location, file)
+    if os.access(path, os.F_OK):
+        os.remove(path)
 
 
 class MyUser(models.Model):
@@ -51,6 +61,7 @@ class MyUser(models.Model):
     def delete_user_pic(self, deletee: "MyUser"):
         if self.permission_to_delete_user(deletee):
             UserPictures.objects.get(username=deletee).user_pic.delete()
+            remove_image("user_pic", deletee.username)
             return f"The user picture for {deletee.username} has been deleted"
         else:
             return "You don't have permission to delete this user's picture"
@@ -58,6 +69,7 @@ class MyUser(models.Model):
     def delete_profile_banner(self, deletee: "MyUser"):
         if self.permission_to_delete_user(deletee):
             UserPictures.objects.get(username=deletee).profile_banner.delete()
+            remove_image("profile_banner", deletee.username)
             return f"The profile banner for {deletee.username} has been deleted"
         else:
             return "You don't have permission to delete this user's profile banner"
@@ -74,8 +86,7 @@ class MyUser(models.Model):
             return "You don't have permission to delete this campaign"
 
     def permission_to_delete_user(self, user_to_delete: "MyUser") -> bool:
-        return (self.role == ROLES[0][0] and user_to_delete.role != ROLES[0][0]) or \
-               (self.role == ROLES[1][0] and user_to_delete == self)
+        return (self.role == ROLES[0][0] and user_to_delete.role != ROLES[0][0]) or user_to_delete == self
 
     def permission_to_delete_campaign(self, campaign_to_delete: "Campaign") -> bool:
         return self.role == ROLES[0][0] or campaign_to_delete.campaign_owner == self
@@ -99,6 +110,7 @@ class Campaign(models.Model):
     def delete_campaign_pic(self, deleter: MyUser):
         if deleter.permission_to_delete_campaign(self.campaign_code):
             CampaignPictures.objects.get(campaign_code=self).campaign_pic.delete()
+            remove_image("campaign_pic", str(self.campaign_code))
             return f"The picture for the campaign \"{self.campaign_name}\" has been deleted"
         else:
             return "You don't have permission to delete this campaign picture"
@@ -106,6 +118,7 @@ class Campaign(models.Model):
     def delete_bg_pic(self, deleter: MyUser):
         if deleter.permission_to_delete_campaign(self.campaign_code):
             CampaignPictures.objects.get(campaign_code=self).bg_pic.delete()
+            remove_image("bg_pic", str(self.campaign_code))
             return f"The background for the campaign \"{self.campaign_name}\" has been deleted"
         else:
             return "You don't have the permission to delete this campaign's background"
