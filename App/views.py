@@ -431,6 +431,7 @@ class EditDatabase(View):
                 for field in image_fields:
                     clear_field(admin_record, data_record, field)
                 confirm_signal = ConfirmationStatus.CONFIRM_EDIT.name
+                data_record.save()
 
             request.session.pop('fields_list')
             edited_record_key = request.session.pop('selected_record')

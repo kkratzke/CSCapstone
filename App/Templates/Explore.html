@@ -23,6 +23,9 @@
 <body>
     <div class="row main">
         <div class="col-2 filter-section">
+            <div class="d-flex align-item-start">
+                <button type="button" class="btn home-button" onclick="location.href = '../';"><i class="fa-solid fa-house fa-lg"></i></button>
+            </div>
             <div class="d-flex justify-content-center">
                 <h1 class="pt-4 pb-5">Explore</h1>
             </div>
@@ -103,12 +106,12 @@
                 </div>
                 <div class="col-3"></div>
                 <div class="col-4">
-                    <div class="input-group mb-3">
-                        <form action="../explore/" method="post"> {% csrf_token %}
-                        <input type="text" class="form-control" placeholder="Search..." name='search' aria-label="Search" aria-describedby="basic-addon1">
-                        <button type="submit" name="start_search" class="input-group-text" id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        </form>
-                    </div>
+                    <form action="../explore/" method="post"> {% csrf_token %}
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search..." name='search' aria-label="Search" aria-describedby="basic-addon1">
+                                <button type="submit" name="start_search" class="input-group-text" id="basic-addon1"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            </div>
+                    </form>
                 </div>
             </div>
             <div class="row pt-4 card-section">
@@ -118,7 +121,7 @@
                         <div class="d-flex justify-content-end">
                             <p class="popularity-icon card_btn">{{ i.subscribers.count }}  <i class="fa-solid fa-fire fa-lg"></i></p>
                         </div>
-                        <img class="card-img-top campaign_img" src="./static/images/media/campaign_pic/{{ campaign.campaign_code }}.png" alt="Card image cap">
+                        <img class="card-img-top campaign_img" src="../static/images/media/campaign_pic/{{ i.campaign_code }}.png" alt="Card image cap">
                         <div class="card-body">
                             <h4 class="card-title mt-1"><b>{{ i.campaign_name }}</b></h4>
                             <p class="card-text">{{ i.campaign_description }}</p>
@@ -254,5 +257,10 @@
     }
     .btn-secondary{
         background-color: #FFB400;
+    }
+    .home-button{
+        height: 60px!important;
+        width: 50px!important;
+        border-width: 0px!important;
     }
 </style>
