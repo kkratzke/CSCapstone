@@ -427,10 +427,11 @@ class EditDatabase(View):
                             change = hashlib.sha256(change.encode("utf-8")).hexdigest()
                         setattr(data_record, field_name, change)
                 confirm_signal = ConfirmationStatus.CONFIRM_EDIT.name
+                data_record.save()
 
             request.session.pop('fields_list')
             edited_record_key = request.session.pop('selected_record')
-            data_record.save()
+
 
             return render(request, "EditDatabase.html", {"login": request.session['login'],
                                                          "role": request.session['role'],
