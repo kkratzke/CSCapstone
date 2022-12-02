@@ -188,7 +188,7 @@ def clear_field(deleter: MyUser, deletee: "App.models", field_name: str) -> str:
         return deleter.delete_user_pic(deletee.username)
     elif field_name == "profile_banner":
         return deleter.delete_profile_banner(deletee.username)
-    elif field_name == "campaign pic":
+    elif field_name == "campaign_pic":
         return deletee.campaign_code.delete_campaign_pic(deleter)
     elif field_name == "bg_pic":
         return deletee.campaign_code.delete_bg_pic(deleter)
