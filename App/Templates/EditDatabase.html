@@ -120,38 +120,6 @@
         </div>
     </nav>
     <h1>{{ table_model }} Record Editor</h1>
-    {% if ask_for_confirmation == "EDITED" %}
-        <form action="" method="post"> {% csrf_token %}
-            <h5>Are you sure you want to make the following changes to {{ selected_record }}?</h5>
-            <ul>
-              {% for name, change in changes_list %}
-                  <li>Changed {{ name }} to {{ change }}</li>
-              {%  endfor %}
-            </ul>
-            <input type="submit" value="Edit" name="confirm">
-            <input type="submit" value="Cancel" name="cancel-changes">
-        </form>
-    {% elif ask_for_confirmation == "CONFIRM_EDIT" %}
-        <h5>Changes successfully saved for {{ selected_record }}!</h5>
-    {% elif ask_for_confirmation == "CLEAR" %}
-        <form action="" method="post"> {% csrf_token %}
-            <h5>Are you sure you want to remove the pictures for {{ selected_record }}?</h5>
-            <p>If you choose "Yes", pictures may not be recoverable at a later point.</p>
-            <input type="submit" value="Clear" name="confirm">
-            <input type="submit" value="Cancel" name="cancel-changes">
-        </form>
-    {% elif ask_for_confirmation == "DELETE" %}
-        <form action="" method="post"> {% csrf_token %}
-            <h5>Are you sure you want to delete {{ selected_record }}?</h5>
-            <p>If you choose "Yes", record may not be recoverable at a later point.</p>
-            <input type="submit" value="Delete" name="confirm">
-            <input type="submit" value="Cancel" name="cancel-changes">
-        </form>
-    {% elif ask_for_confirmation == "CONFIRM_REMOVE" %}
-        {% for message in result_messages %}
-            <h5>{{ message }}</h5>
-        {%  endfor %}
-    {% endif %}
     <form action="" method="post"> {% csrf_token %}
         <label for="selected-table">Pick a Table to Edit:</label>
         <select name="selected-table" id="selected-table">
@@ -202,13 +170,83 @@
                 <br>
             {% endfor %}
             {% if allow_deletion == 2 %}
-                <input type="submit" value="Delete Record" name="delete-record"/>
+                <button type="button" class="btn mt-4" data-bs-toggle="modal" data-bs-target="#delete-record-modal">
+                  Delete Record
+                </button>
             {% else %}
-                <input type="submit" value="Clear Record" name="clear-record">
+              <button type="button" class="btn mt-4" data-bs-toggle="modal" data-bs-target="#clear-record-modal">
+                  Clear Record
+              </button>
             {% endif %}
-            <input type="submit" value="Save Changes" name="save-changes">
+              <button type="button" name="save-changes" class="btn mt-4" data-bs-toggle="modal" data-bs-target="#save-changes-modal">
+                  Save
+              </button>
         </form>
     {% endif %}
+    <div class="modal fade" id="save-changes-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Changes to {{ selected_record}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="post"> {% csrf_token %}
+                <p><b>Are you sure you want to make the following changes to {{ selected_record }}?</b></p>
+                <ul>
+                  {% for name, change in changes_list %}
+                      <li>Changed {{ name }} to {{ change }}</li>
+                  {%  endfor %}
+                </ul>
+              </form>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="Edit" name="confirm">
+                <input type="submit" value="Cancel" data-bs-dismiss="modal" name="cancel-changes">
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="clear-record-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Changes to {{ selected_record}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="post"> {% csrf_token %}
+                <p><b>Are you sure you want to remove the pictures for {{ selected_record }}?</b></h5>
+                <p>If you choose "Yes", pictures may not be recoverable at a later point.</p>
+              </form>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="Clear" name="confirm">
+                <input type="submit" value="Cancel" data-bs-dismiss="modal" name="cancel-changes">
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="delete-record-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Changes to {{ selected_record}}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="post"> {% csrf_token %}
+                <p><b>Are you sure you want to delete {{ selected_record }}?</b></p>
+                <p>If you choose "Yes", record may not be recoverable at a later point.</p>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <input type="submit" value="Delete" name="confirm">
+              <input type="submit" value="Cancel" data-bs-dismiss="modal" name="cancel-changes">
+            </div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>
 <style>
