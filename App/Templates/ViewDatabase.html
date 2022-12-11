@@ -122,16 +122,19 @@
     {% if role != "Admin" %}
         <p>You don't have permission to view the database. If you're an admin, please login to view this page.</p>
     {% else %}
-        <h1>{{ table_model }} Table Management</h1>
-        <form action="" method="post"> {% csrf_token %}
-            <label for="selected-table">Pick a Table to View:</label>
-            <select name="selected-table" id="selected-table">
-                {% for model in tables %}
-                    <option value="{{ model }}" {% if model == table_model %}selected{% endif %}>{{ model }}</option>
-                {% endfor %}
-            </select>
-            <input type="submit" value="View Table">
-        </form>
+    <div class="container-fluid">
+      <div class="row justify-content-center contents-container">
+          <div class="col-12 col-sm-6 col-md-3 contents">
+          <h1>{{ table_model }} Table Management</h1>
+          <form action="" method="post"> {% csrf_token %}
+              <label for="selected-table">Pick a Table to View:</label>
+              <select name="selected-table" id="selected-table">
+                  {% for model in tables %}
+                      <option value="{{ model }}" {% if model == table_model %}selected{% endif %}>{{ model }}</option>
+                  {% endfor %}
+              </select>
+              <input type="submit" value="View Table">
+          </form>
         {% if table_selected == True %}
             <form action="" method="post" name="filter-table" id="filter-table"> {% csrf_token %}
                 {% for field_name, choices in fields_list %}
@@ -154,43 +157,68 @@
                 {% endfor %}
                 <input type="submit" value="Filter Table">
             </form>
-            {% if table_selected == True and search_made == True %}
-                 {% if no_results == False %}
-                     <table>
-                        <thead>
-                            <tr>
-                                {% for col in table_columns %}
-                                    <th>{{ col }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for record in table_data %}
-                                <tr>
-                                    {% for dataEntry in record %}
-                                        <td>{{ dataEntry }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                 {% else %}
-                     <p>Sorry, there aren't any matches to your query! :(</p>
-                 {% endif %}
-            {% endif %}
         {% endif %}
+        </div>
+      </div>
+    </div>
     {% endif %}
+    <div class="row mt-3">
+      <div class="col-12">
+        {% if search_made == True %}
+        {% if no_results == False %}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                {% for col in table_columns %}
+                  <th scope="col">{{ col }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in table_data %}
+              <tr>
+                {% for dataEntry in record %}
+                <td>{{ dataEntry }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>Sorry, there aren't any matches to your query! :(</p>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
 </body>
 </html>
 <style>
+  .table{
+    background-color: #FFFFFF;
+    padding-top: 20px;
+  }
   .user-profile{
   width: 35px;
+  }
+  body{
+    background-color: #6936F5;
   }
   .navbar{
     width: 75%;
     margin-right: auto;
     margin-left: auto;
     background-color: #FFFFFF;
+  }
+  .contents{
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .contents-container{
+    padding-top: 40px;
   }
 </style>
 

@@ -119,7 +119,10 @@
           </div>
         </div>
     </nav>
-    <h1>{{ table_model }} Record Editor</h1>
+    <div class="container-fluid">
+      <div class="row justify-content-center contents-container">
+          <div class="col-12 col-sm-6 col-md-3 contents">
+            <h2>{{ table_model }} Record Editor</h2>
     {% if ask_for_confirmation == "EDITED" %}
         <form action="" method="post"> {% csrf_token %}
             <h5>Are you sure you want to make the following changes to {{ selected_record }}?</h5>
@@ -172,46 +175,71 @@
             <input type="submit" value="Load Data">
         </form>
     {% endif %}
+          </div>
+      </div>
+    </div>
+    <!--Table-->
     {% if table_selected == True and selected_record != "" %}
-         <form action="" method="post" name="edit-record" id="edit-record"> {% csrf_token %}
-            {% for field_name, choices, not_editable, field_value in fields_list %}
+    <div class="row pt-5">
+      <div class="col-12">
+      <form action="" method="post" name="edit-record" id="edit-record"> {% csrf_token %}
+          <table class="table table-striped">
+          <thead>
+            <tr>
+              {% for field_name, choices, not_editable, field_value in fields_list %}
                 {% if field_name == "password" %}
-                    <label for="password">New Password: </label>
+                  <th scope="col"><label for="password">New Password: </label></th>
                 {% else %}
-                    <label for="{{ field_name }}">{{ field_name }}: </label>
+                  <th scope="col"><label for="{{ field_name }}">{{ field_name }}: </label></th>
                 {% endif %}
-                {% if choices is not None %}
-                    <select name={{ field_name }} id={{ field_name }}>
-                        {% for choice in choices %}
-                            <option value="{{ choice }}" {% if field_value == choice %}selected{% endif %}>{{ choice }}</option>
-                        {% endfor %}
-                    </select>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for field_name, choices, not_editable, field_value in fields_list %}
+              {% if choices is not None %}
+                <td><select name={{ field_name }} id={{ field_name }}>
+                    {% for choice in choices %}
+                        <option value="{{ choice }}" {% if field_value == choice %}selected{% endif %}>{{ choice }}</option>
+                    {% endfor %}
+                </td>
+                </select>
                 {% elif field_name == "password" %}
-                    <input type="password" id="{{ field_name }}" name="{{ field_name }}" />
+                    <td><input type="password" id="{{ field_name }}" name="{{ field_name }}" /></td>
                 {% elif field_name == "donation_total" %}
-                    <input type="text" inputmode="numeric" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" pattern="^(([1-9]\d{0,7})|(0))\.\d{2}$">
+                    <td><input type="text" inputmode="numeric" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" pattern="^(([1-9]\d{0,7})|(0))\.\d{2}$"></td>
                 {% elif not_editable > 0 %}
-                    <input type="text" id="{{ field_name }}" class="readonly-text" name="{{ field_name }}" value="{{ field_value }}" readonly/>
+                    <td><input type="text" id="{{ field_name }}" class="readonly-text" name="{{ field_name }}" value="{{ field_value }}" readonly/></td>
                 {% else %}
-                    <input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" />
-                    {% if not_editable == 0 %}
-                        <label for="clear-{{ field_name }}">Clear {{ field_name }}: </label>
-                        <input type="checkbox" name="clear-{{ field_name }}" value="Yes"/>
-                    {% endif %}
-                {% endif %}
-                <br>
-            {% endfor %}
-            {% if allow_deletion == 2 %}
-                <input type="submit" value="Delete Record" name="delete-record"/>
-            {% else %}
-                <input type="submit" value="Clear Record" name="clear-record">
-            {% endif %}
-            <input type="submit" value="Save Changes" name="save-changes">
-        </form>
+                    <td><input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" /></td>
+                {% if not_editable == 0 %}
+                <td><label for="clear-{{ field_name }}">Clear {{ field_name }}: </label>
+                    <input type="checkbox" name="clear-{{ field_name }}" value="Yes"/></td>
+              {% endif %}
+              {% endif %}
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          {% if allow_deletion == 2 %}
+          <input class="submit_btn" type="submit" value="Delete Record" name="delete-record"/>
+          {% else %}
+          <input class="submit_btn" type="submit" value="Clear Record" name="clear-record">
+          {% endif %}
+          <input class="submit_btn" type="submit" value="Save Changes" name="save-changes">
+        </div>
+      </form>
+    </div>
+  </div>
     {% endif %}
 </body>
 </html>
 <style>
+  body{
+    background-color: #6936F5;
+  }
   .user-profile{
   width: 35px;
   }
@@ -228,6 +256,22 @@
 
   .readonly-text:focus {
       border: none;
+  }
+  .submit_btn{
+    background-color: #FFFFFF;
+  }
+  .contents{
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-shadow: 0px 0px 40px 0px;
+  }
+  .contents-container{
+    padding-top: 80px;
+  }
+  .table{
+    background-color: #FFFFFF;
   }
 </style>
 
