@@ -212,11 +212,13 @@
                 {% elif not_editable > 0 %}
                     <td><input type="text" id="{{ field_name }}" class="readonly-text" name="{{ field_name }}" value="{{ field_value }}" readonly/></td>
                 {% else %}
-                    <td><input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" /></td>
-                {% if not_editable == 0 %}
-                <td><label for="clear-{{ field_name }}">Clear {{ field_name }}: </label>
-                    <input type="checkbox" name="clear-{{ field_name }}" value="Yes"/></td>
-              {% endif %}
+                    <td>
+                        <input type="text" id="{{ field_name }}" name="{{ field_name }}" value="{{ field_value }}" />
+                        {% if not_editable == 0 %}
+                            <label for="clear-{{ field_name }}">Clear {{ field_name }}: </label>
+                            <input type="checkbox" name="clear-{{ field_name }}" value="Yes"/>
+                        {% endif %}
+                    </td>
               {% endif %}
               {% endfor %}
             </tr>
