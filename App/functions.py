@@ -1,6 +1,6 @@
 from itertools import chain
 
-#import mysql.connector
+import mysql.connector
 from django.core import serializers
 
 from App.models import *
@@ -124,7 +124,7 @@ def add_test_user(username: str, role: str, campaignCode: int):
     campaign_to_return = Campaign(campaign_code=campaignCode, campaign_name="Test Campaign " + str(campaignCode),
                                   campaign_owner=user_to_return)
     campaign_to_return.save()
-    UserPictures(id=user_to_return, user_pic='App/static/images/profile-user.png',
+    UserPictures(username=user_to_return, user_pic='App/static/images/profile-user.png',
                  profile_banner='App/static/images/community-1.jpg').save()
     CampaignPictures(campaign_code=campaign_to_return, campaign_pic="App/static/images/media/campaign_pic/10008.png",
                      bg_pic='App/static/images/community-1.jpg').save()

@@ -73,9 +73,9 @@ class UploadPictures(TestCase):
 
     def test_upload_user_pic(self):
         image_to_upload = "App/testPics/testUserPic1.jpeg"
-        pic_pkg = UserPictures(id=self.user1, user_pic=image_to_upload)
+        pic_pkg = UserPictures(username=self.user1, user_pic=image_to_upload)
         pic_pkg.save()
-        self.assertTrue(UserPictures.objects.filter(id=self.user1))
+        self.assertTrue(UserPictures.objects.filter(username=self.user1))
 
     def test_upload_bg_pic(self):
         image_to_upload = "App/testPics/testBGPic.jpeg"

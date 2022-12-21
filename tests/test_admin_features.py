@@ -15,7 +15,7 @@ class AdminDeleteFeatures(TestCase):
 
     def test_delete_campaign(self):
         expected_message = "Campaign \"Test Campaign 1\" has been deleted"
-        self.assertEqual(self.testAdmin["user"].delete_campaign(self.user1["campaign"].campaign_code), expected_message)
+        self.assertEqual(self.testAdmin["user"].delete_campaign(self.user1["campaign"]), expected_message)
 
     def test_delete_user_pic(self):
         expected_message = f"The user picture for {self.user1['user'].username} has been deleted"
