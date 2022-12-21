@@ -547,6 +547,10 @@ def mapping(s):
     if s == 'Other':
         return 4
 
+class HelpPage(View):
+    def get(self, request):
+        return render(request, "Help.html")
+
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html" )
