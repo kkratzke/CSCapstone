@@ -139,6 +139,7 @@
         </div>
         <div class="col-5 under-2">
           <div class="d-flex flex-row-reverse">
+          {% if user is not None %}
             {% if not is_subscribed %}
             <form action="/" method="post"> {% csrf_token %}
               <button class="btn btn-success btn-block" type="submit" name="subscribe">Subscribe</button>
@@ -151,6 +152,7 @@
                   <input input type="hidden" value={{ campaign.campaign_code }} name="campaign_code"></input>
             </form>
             {% endif %}
+          {% endif %}
           </div>
         </div>
       </div>
