@@ -547,6 +547,10 @@ def mapping(s):
     if s == 'Other':
         return 4
 
+class HelpPage(View):
+    def get(self, request):
+        return render(request, "Help.html")
+
 class ExplorePage(View):
     def get(self, request):
         return render(request, "Explore.html" )
@@ -669,12 +673,15 @@ def campaign_view(request, slug=None):
             raise Http404
     print(campaign)
 
-    this_user = MyUser.objects.get(username__iexact=request.session['login'])
+    if request.session['login']:
+        this_user = MyUser.objects.get(username__iexact=request.session['login'])
+    else:
+        this_user = None
 
     found = False
     for i in campaign.subscribers.all():
         if i == this_user:
             found = True
-    return render(request, "ViewCampaign.html", {'num_subs': campaign.subscribers.count, "campaign": campaign, "is_subscribed":found, "login": request.session['login']})
+    return render(request, "ViewCampaign.html", {"user": this_user, 'num_subs': campaign.subscribers.count, "campaign": campaign, "is_subscribed":found, "login": request.session['login']})
 
 
